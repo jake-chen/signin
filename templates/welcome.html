@@ -153,6 +153,22 @@
     <!--      <hr class="featurette-divider">-->
 
 
+    <form name="filterForm" id="filterForm" action="/" method="POST" />
+    <div class="input-append">
+      <input class="span2" id="filter_type" name="filter_type" type="hidden">
+      <div class="btn-group">
+        <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          Filter by Category
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+          <li onclick="$('#filter_type').val('Sailing Team'); $('#filterForm').submit()"><a>Sailing Team</a></li>
+           <li onclick="$('#filter_type').val('Not the sailing team'); $('#filterForm').submit()"><a>Not the sailing team</a></li>
+  </ul>
+      </div>
+    </div>
+    </form>
+
     {{with $stats}} {{if .LoggedIn}}
     <div class="jumbotron">
       <h1>Welcome!</h1>
@@ -212,6 +228,12 @@
                 </div>
               </div>
               <div class="form-group">
+                <label for="inputCategory" class="col-lg-2 control-label">Category</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" name="inputCategory" id="inputCategory" placeholder="Your Project Category" required>
+                </div>
+              </div>
+              <div class="form-group">
                 <label for="textArea" class="col-lg-2 control-label">Description</label>
                 <div class="col-lg-10">
                   <textarea class="form-control" rows="3" name="textArea" id="textArea" required></textarea>
@@ -261,7 +283,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="/static/bootstrap.js"></script>
   <script type="text/javascript">
-    $(window).on("resize", methodToFixLayout);
+    $(window).resize(methodToFixLayout);
+    $(window).ready(methodToFixLayout);
 
     function methodToFixLayout(e) {
       var winHeight = $(window).height();

@@ -6,18 +6,22 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"regexp"
 
 	"appengine"
 	"appengine/blobstore"
 	"appengine/datastore"
 	"appengine/user"
+
+	"github.com/gorilla/mux"
 )
 
 //a Tile represents a slot for a team on the buildboard
 type Tile struct {
-	Name   string
-	Desc   string
-	Imgref string
+	Name     string
+	Desc     string
+	Category string
+	Imgref   string
 }
 
 //the user's logged in status as a struct wrapper
@@ -29,18 +33,23 @@ var status *Status = &Status{LoggedIn: false}
 
 //google app engine init function
 func init() {
+	r := mux.NewRouter()
+	r.HandleFunc("/", root).Methods("GET")
+	r.HandleFunc("/", filter).Methods("POST")
+
 	//handler for serving static files (css, html)
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static", fs))
 	//handle google authentication
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/logout", logout)
-	//handles root view
-	http.HandleFunc("/", root)
 	//handles creation of new tile
 	http.HandleFunc("/submit", submit)
 
 	http.HandleFunc("/serve/", serve)
+
+	//handles root view
+	http.Handle("/", r)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +68,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Location", "/")
 	w.WriteHeader(http.StatusFound)
-	(*status).LoggedIn = true
 	return
 }
 
@@ -89,22 +97,42 @@ func tileRootKey(c appengine.Context) *datastore.Key {
 
 //root view
 func root(w http.ResponseWriter, r *http.Request) {
+	renderRoot(w, r, nil)
+}
+
+func filter(w http.ResponseWriter, r *http.Request) {
+	log.Println("POST request made!")
+	log.Println(r.FormValue("filter_type"))
+	renderRoot(w, r, []string{r.FormValue("filter_type")})
+}
+
+func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	c := appengine.NewContext(r)
 	u := user.Current(c)
 	//need to check if user is logged in so that the login/logout button
 	//is toggled correctly
 	if u == nil {
 		status.LoggedIn = false
+	} else if matched, _ := regexp.MatchString(".*@cornell.edu", u.String()); !matched {
+		status.LoggedIn = false
+		http.Redirect(w, r, "/logout", http.StatusFound)
 	} else {
 		status.LoggedIn = true
 	}
+	log.Printf("The user logged in is %v", u)
 	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c))
+	if filter != nil {
+		qs = qs.Filter("Name =", filter[0])
+	}
 	tiles := make([]Tile, 0, 10)
 	if _, err := qs.GetAll(c, &tiles); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	//debug
 	log.Print(tiles)
+
 	//serve the root template
 	fp3 := path.Join("templates", "welcome.html")
 	templ := template.Must(template.ParseFiles(fp3))
@@ -116,6 +144,7 @@ func root(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html")
 	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status, "uploadURL": uploadURL})
+
 }
 
 func submit(w http.ResponseWriter, r *http.Request) {
@@ -129,9 +158,10 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newdata := Tile{
-		Name:   string(other["inputName"][0]),
-		Desc:   string(other["textArea"][0]),
-		Imgref: string(blobs["inputFile"][0].BlobKey),
+		Name:     string(other["inputName"][0]),
+		Desc:     string(other["textArea"][0]),
+		Category: string(other["inputCategory"][0]),
+		Imgref:   string(blobs["inputFile"][0].BlobKey),
 	}
 	key := datastore.NewKey(c, "Tile", newdata.Name, 0, tileRootKey(c))
 	_, keyerr := datastore.Put(c, key, &newdata)
