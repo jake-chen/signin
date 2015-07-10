@@ -175,10 +175,13 @@
       <p>Project not listed? Add yours to the system here.</p>
       <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">New Item</button>
     </div>
+
+
+    <!--TILE-->
     {{end}} {{end}} {{range index . "Tiles"}}
     <div class="jumbotron">
       <div class="row featurette">
-        <div class="col-md-7">
+        <div class="col-md-6">
           {{with .Name}}
           <h2 class="featurette-heading" id="{{.}}">{{.}}</h2> {{else}}
           <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
@@ -186,8 +189,8 @@
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
-        </div>
-        <div class="col-md-5">
+      <!---  </div>
+        <div class="col-md-3"> -->
           {{with .Imgref}}
           <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
         </div>
