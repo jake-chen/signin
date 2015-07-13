@@ -162,7 +162,7 @@
     {{if cong $tmp}}
     <div class="row featurette">
     {{end}}
-      <div class="col-md-6">
+      <div class="col-md-8">
         <div class="col-md-{{divide 12 $numcols}}">
           {{with .Name}}
           <h2 class="featurette-heading" id="{{.}}">{{.}}</h2> 
@@ -174,8 +174,8 @@
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
-        </div>
-        <div class="col-md-{{divide 12 $numcols}}">
+        <!---</div>
+        <div class="col-md-{{divide 12 $numcols}}"> -->
           {{with .Imgref}}
           <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
           {{end}}
