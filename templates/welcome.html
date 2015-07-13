@@ -126,33 +126,9 @@
   <!-- Wrap the rest of the page in another container to center all the content. -->
 
   <div class="container marketing">
-
-    <!-- Three columns of text below the carousel -->
-    <!--<div class="row">
-        <div class="col-lg-4">
-          <img class="img-circle" src="/static/tomato.png" alt="Generic placeholder image" width="140" height="140">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-lg-4">
-          <img class="img-circle" src="/static/tomato.png" alt="Generic placeholder image" width="140" height="140">
-          <h2>Heading</h2>
-          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-lg-4">
-          <img class="img-circle" src="/static/tomato.png" alt="Generic placeholder image" width="140" height="140">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-      </div>-->
     <!-- START THE FEATURETTES -->
 
     <!--      <hr class="featurette-divider">-->
-
-
     <form name="filterForm" id="filterForm" action="/" method="POST" />
     <div class="input-append">
       <input class="span2" id="filter_type" name="filter_type" type="hidden">
@@ -163,40 +139,56 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
           <li onclick="$('#filter_type').val('Sailing Team'); $('#filterForm').submit()"><a>Sailing Team</a></li>
-           <li onclick="$('#filter_type').val('Not the sailing team'); $('#filterForm').submit()"><a>Not the sailing team</a></li>
-  </ul>
+          <li onclick="$('#filter_type').val('Not the sailing team'); $('#filterForm').submit()"><a>Not the sailing team</a></li>
+        </ul>
       </div>
     </div>
     </form>
-
-    {{with $stats}} {{if .LoggedIn}}
+  {{$numcols := 2}}
+  {{with $stats}} 
+    {{if .LoggedIn}}
     <div class="jumbotron">
       <h1>Welcome!</h1>
       <p>Project not listed? Add yours to the system here.</p>
       <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">New Item</button>
     </div>
-    {{end}} {{end}} {{range index . "Tiles"}}
-    <div class="jumbotron">
-      <div class="row featurette">
-        <div class="col-md-7">
+    {{end}} 
+  {{end}} 
+  {{range $count, $val := (index . "Tiles")}}
+    {{$tmp := $count}}
+    {{if cong $tmp}}
+    <div class="row featurette">
+    {{end}}
+      <div class="col-md-6">
+        <div class="col-md-{{divide 12 $numcols}}">
           {{with .Name}}
-          <h2 class="featurette-heading" id="{{.}}">{{.}}</h2> {{else}}
-          <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
+          <h2 class="featurette-heading" id="{{.}}">{{.}}</h2> 
+          {{else}}
+          <h2 class="featurette-heading">First Featurette Heading.</h2> 
+          {{end}} 
+          {{with .Desc}}
           <p class="lead">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
         </div>
-        <div class="col-md-5">
+        <div class="col-md-{{divide 12 $numcols}}">
           {{with .Imgref}}
-          <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
+          <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
+          {{end}}
         </div>
       </div>
+    {{if not (cong $tmp)}}
     </div>
-    <hr class="featurette-divider"> {{end}}
-    <!-- /END THE FEATURETTES -->
+    <hr class="featurette-divider">
+    {{end}}
+  {{end}}
+    <!-- /END THE FEATURETTES --> 
 
-
+  {{if not (cong (index . "Tiles" | len))}}
+  </div>
+  <hr class="featurette-divider">
+  {{end}}
     <!-- FOOTER -->
     <footer>
       <p class="pull-right"><a href="#">Back to top</a></p>

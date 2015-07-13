@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path"
 	"regexp"
 
 	"appengine"
@@ -134,9 +133,15 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	log.Print(tiles)
 
 	//serve the root template
-	fp3 := path.Join("templates", "welcome.html")
-	templ := template.Must(template.ParseFiles(fp3))
 
+	funcMap := template.FuncMap{
+		"divide": div,
+		"incr":   incr,
+		"cong":   congz,
+	}
+
+	//	fp3 := path.Join("templates", "welcome.html")
+	templ := template.Must(template.New("welcome.html").Funcs(funcMap).ParseFiles("templates/welcome.html"))
 	//obtain a new uploadURL for team photo, for blobstore
 	uploadURL, err := blobstore.UploadURL(c, "/submit", nil)
 	if err != nil {
@@ -145,6 +150,20 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	w.Header().Set("Content-Type", "text/html")
 	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status, "uploadURL": uploadURL})
 
+}
+
+func div(a int, b int) int {
+	return a / b
+}
+
+//hardcoded increment modulo 2
+func incr(a int) int {
+	return (a + 1) % 2
+}
+
+//hardcoded test for even-ness
+func congz(a int) bool {
+	return a%2 == 0
 }
 
 func submit(w http.ResponseWriter, r *http.Request) {
