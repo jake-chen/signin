@@ -207,6 +207,7 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	datastore.Get(c, k, &dTile)
 	log.Println(dTile)
 	if u := user.Current(c); dTile.Creator != u.String() {
+		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	} else {
 		log.Println("deleting things now...")
@@ -220,5 +221,5 @@ func delete(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	log.Println("redirecting")
-	http.Redirect(w, r, "/pomato", http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
