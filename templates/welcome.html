@@ -8,7 +8,7 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="icon" href="../../favicon.ico">
+<!--  <link rel="icon" href="../../favicon.ico">-->
 
   <title>Carousel Template for Bootstrap</title>
 
@@ -163,7 +163,8 @@
     <div class="row featurette">
     {{end}}
       <div class="col-md-6">
-        <div class="col-md-{{divide 12 $numcols}}">
+        <a class="pull-right btn-sm"><i class="glyphicon glyphicon-trash icon-white"></i></a>
+<!--        <div class="col-md-{{divide 12 $numcols}}">-->
           {{with .Name}}
           <h2 class="featurette-heading" id="{{.}}">{{.}}</h2> 
           {{else}}
@@ -174,12 +175,12 @@
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
-        </div>
-        <div class="col-md-{{divide 12 $numcols}}">
+<!--        </div>-->
+<!--        <div class="col-md-{{divide 12 $numcols}}">-->
           {{with .Imgref}}
           <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
           {{end}}
-        </div>
+<!--        </div>-->
       </div>
     {{if not (cong $tmp)}}
     </div>

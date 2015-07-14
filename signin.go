@@ -21,6 +21,7 @@ type Tile struct {
 	Desc     string
 	Category string
 	Imgref   string
+	Creator  string
 }
 
 //the user's logged in status as a struct wrapper
@@ -130,7 +131,7 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	}
 
 	//debug
-	log.Print(tiles)
+	//log.Print(tiles)
 
 	//serve the root template
 
@@ -181,6 +182,7 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		Desc:     string(other["textArea"][0]),
 		Category: string(other["inputCategory"][0]),
 		Imgref:   string(blobs["inputFile"][0].BlobKey),
+		Creator:  string(user.Current(c).String()),
 	}
 	key := datastore.NewKey(c, "Tile", newdata.Name, 0, tileRootKey(c))
 	_, keyerr := datastore.Put(c, key, &newdata)
