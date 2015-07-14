@@ -48,6 +48,8 @@ func init() {
 
 	http.HandleFunc("/serve/", serve)
 
+	http.HandleFunc("/delete/", delete)
+
 	//handles root view
 	http.Handle("/", r)
 }
@@ -196,4 +198,27 @@ func submit(w http.ResponseWriter, r *http.Request) {
 //for serving images, using the blobkey we stored in the datastore
 func serve(w http.ResponseWriter, r *http.Request) {
 	blobstore.Send(w, appengine.BlobKey(r.FormValue("blobKey")))
+}
+
+func delete(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	var dTile Tile
+	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c))
+	datastore.Get(c, k, &dTile)
+	log.Println(dTile)
+	if u := user.Current(c); dTile.Creator != u.String() {
+		return
+	} else {
+		log.Println("deleting things now...")
+		e1 := blobstore.Delete(c, appengine.BlobKey(dTile.Imgref))
+		e2 := datastore.Delete(c, k)
+		if e1 != nil {
+			log.Println("error with blobstore delete")
+		}
+		if e2 != nil {
+			log.Println("error with datastore delete")
+		}
+	}
+	log.Println("redirecting")
+	http.Redirect(w, r, "/pomato", http.StatusFound)
 }
