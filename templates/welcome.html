@@ -168,12 +168,12 @@
 <!--        <div class="col-md-{{divide 12 $numcols}}">-->
         {{end}}
           {{with .Name}}
-          <h2 class="featurette-heading" id="{{.}}">{{.}}</h2> 
+          <h2 class="featurette-heading text-center" id="{{.}}">{{.}}</h2> 
           {{else}}
           <h2 class="featurette-heading">First Featurette Heading.</h2> 
           {{end}} 
           {{with .Desc}}
-          <p class="lead">{{.}}</p>
+          <p class="lead text-justify pad-left pad-right">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
