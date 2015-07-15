@@ -61,6 +61,8 @@ func init() {
 
 	http.HandleFunc("/delete/", delete)
 
+	http.HandleFunc("/edit", edit)
+
 	//handles root view
 	http.Handle("/", r)
 }
@@ -242,4 +244,25 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("redirecting")
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func edit(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	arr := regexp.MustCompile("_").Split(r.FormValue("id"), 2)
+	name := arr[0]
+	field := arr[1]
+	value := r.FormValue("value")
+	k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c))
+	var uTile Tile
+	datastore.Get(c, k, &uTile)
+	switch field {
+	case "name":
+		uTile.Name = value
+		break
+	case "desc":
+		uTile.Desc = value
+		break
+	}
+	datastore.Put(c, k, &uTile)
+	w.Write([]byte(uTile.Desc))
 }
