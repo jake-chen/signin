@@ -26,10 +26,21 @@ type Tile struct {
 
 //the user's logged in status as a struct wrapper
 type Status struct {
-	LoggedIn bool
+	LoggedIn    bool
+	CurrentUser *user.User
 }
 
-var status *Status = &Status{LoggedIn: false}
+func (s *Status) reset() {
+	s.LoggedIn = false
+	s.CurrentUser = nil
+}
+
+func (s *Status) set(b bool, u *user.User) {
+	s.LoggedIn = b
+	s.CurrentUser = u
+}
+
+var status *Status = &Status{LoggedIn: false, CurrentUser: nil}
 
 //google app engine init function
 func init() {
@@ -114,12 +125,12 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	//need to check if user is logged in so that the login/logout button
 	//is toggled correctly
 	if u == nil {
-		status.LoggedIn = false
+		status.reset()
 	} else if matched, _ := regexp.MatchString(".*@cornell.edu", u.String()); !matched {
-		status.LoggedIn = false
+		status.reset()
 		http.Redirect(w, r, "/logout", http.StatusFound)
 	} else {
-		status.LoggedIn = true
+		status.set(true, u)
 	}
 	log.Printf("The user logged in is %v", u)
 	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c))
@@ -138,9 +149,10 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	//serve the root template
 
 	funcMap := template.FuncMap{
-		"divide": div,
-		"incr":   incr,
-		"cong":   congz,
+		"divide":  div,
+		"incr":    incr,
+		"cong":    congz,
+		"ustring": ustring,
 	}
 
 	//	fp3 := path.Join("templates", "welcome.html")
@@ -167,6 +179,14 @@ func incr(a int) int {
 //hardcoded test for even-ness
 func congz(a int) bool {
 	return a%2 == 0
+}
+
+func ustring(u *user.User) string {
+	if u == nil {
+		return ""
+	} else {
+		return u.String()
+	}
 }
 
 func submit(w http.ResponseWriter, r *http.Request) {
