@@ -40,8 +40,6 @@ func (s *Status) set(b bool, u *user.User) {
 	s.CurrentUser = u
 }
 
-var status *Status = &Status{LoggedIn: false, CurrentUser: nil}
-
 //google app engine init function
 func init() {
 	r := mux.NewRouter()
@@ -123,9 +121,11 @@ func filter(w http.ResponseWriter, r *http.Request) {
 
 func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	c := appengine.NewContext(r)
-	u := user.Current(c)
+	log.Println(c)
+	//u := user.Current(c)
 	//need to check if user is logged in so that the login/logout button
 	//is toggled correctly
+	var status *Status = &Status{LoggedIn: false, CurrentUser: nil}
 	if u == nil {
 		status.reset()
 	} else if matched, _ := regexp.MatchString(".*@cornell.edu", u.String()); !matched {
@@ -214,6 +214,7 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	//	log.Println(w.Header)
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
@@ -227,7 +228,6 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	var dTile Tile
 	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c))
 	datastore.Get(c, k, &dTile)
-	log.Println(dTile)
 	if u := user.Current(c); dTile.Creator != u.String() {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
