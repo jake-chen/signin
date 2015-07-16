@@ -121,8 +121,8 @@ func filter(w http.ResponseWriter, r *http.Request) {
 
 func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	c := appengine.NewContext(r)
-	log.Println(c)
-	//u := user.Current(c)
+	//log.Println(c)
+	u := user.Current(c)
 	//need to check if user is logged in so that the login/logout button
 	//is toggled correctly
 	var status *Status = &Status{LoggedIn: false, CurrentUser: nil}
