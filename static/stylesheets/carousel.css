@@ -3,6 +3,7 @@
 /* Padding below the footer and lighter body text */
 
 body {
+  padding-top: 40px;
   padding-bottom: 40px;
   color: #5a5a5a;
 }
@@ -18,6 +19,7 @@ body {
   right: 0;
   left: 0;
   z-index: 20;
+  margin-bottom: 20px;
 }
 
 /* Flip around the padding for proper display in narrow viewports */
@@ -135,6 +137,13 @@ body {
   }
 
 
+}
+
+.pad-bottom{
+  padding-bottom: 5%;
+}
+.pad-top {
+  padding-top: 5%;
 }
 
 .lead p{
