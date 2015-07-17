@@ -21,7 +21,7 @@
 ================================================== -->
 
 <body>
-  <div class="navbar-wrapper">
+  <div class="navbar-wrapper pad-bottom">
     <div class="container">
 
       <nav class="navbar navbar-inverse navbar-static-top">
@@ -39,7 +39,7 @@
             <ul class="nav navbar-nav">
               <li class="active"><a href="#">Home</a></li>
               <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li><a href="/carousel">Presentation view</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -67,11 +67,10 @@
     </div>
   </div>
 
-  <hr>
   <!-- Carousel
     ================================================== -->
-  <div id="myCarousel" class="carousel slide" data-ride="carousel">
-    <!-- Indicators -->
+ <!-- <div id="myCarousel" class="carousel slide" data-ride="carousel">
+     Indicators 
     <ol class="carousel-indicators">
       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
       <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -117,7 +116,7 @@
       <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
       <span class="sr-only">Next</span>
     </a>
-  </div>
+  </div>-->
   <!-- /.carousel -->
 
 
@@ -125,11 +124,11 @@
     ================================================== -->
   <!-- Wrap the rest of the page in another container to center all the content. -->
 
-  <div class="container marketing">
+  <div class="container marketing pad-top">
     <!-- START THE FEATURETTES -->
 
     <!--      <hr class="featurette-divider">-->
-    <form name="filterForm" id="filterForm" action="/" method="POST" />
+    <!--<form name="filterForm" id="filterForm" action="/" method="POST">
     <div class="input-append">
       <input class="span2" id="filter_type" name="filter_type" type="hidden">
       <div class="btn-group">
@@ -143,7 +142,7 @@
         </ul>
       </div>
     </div>
-    </form>
+    </form>-->
   
   {{$numcols := 2}}
   {{with $stats}} 
@@ -174,7 +173,7 @@
           <h2 class="featurette-heading">First Featurette Heading.</h2> 
           {{end}} 
           {{with .Desc}}
-          <p class="lead edit text-justify pad-left pad-right" id="{{$name}}_desc">{{.}}</p>
+          <p class="lead editable_textarea text-justify pad-left pad-right" id="{{$name}}_desc">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
@@ -287,7 +286,15 @@
   <script type="text/javascript">
     $(window).resize(methodToFixLayout);
     $(window).ready(methodToFixLayout);
-    $(document).ready(function() {$('.edit').editable('/edit');});
+    $(document).ready(function() {$(".editable_textarea").editable("/edit", { 
+      indicator : "<img src='img/indicator.gif'>",
+      type   : 'textarea',
+      submitdata: { _method: "put" },
+      select : true,
+      submit : 'OK',
+      cancel : 'cancel',
+      cssclass : "editable"
+  });});
     
     
     function methodToFixLayout(e) {

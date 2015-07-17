@@ -61,6 +61,7 @@ func init() {
 
 	http.HandleFunc("/edit", edit)
 
+	http.HandleFunc("/carousel", carousel)
 	//handles root view
 	http.Handle("/", r)
 }
@@ -265,4 +266,45 @@ func edit(w http.ResponseWriter, r *http.Request) {
 	}
 	datastore.Put(c, k, &uTile)
 	w.Write([]byte(uTile.Desc))
+}
+
+func carousel(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	//log.Println(c)
+	u := user.Current(c)
+	//need to check if user is logged in so that the login/logout button
+	//is toggled correctly
+	var status *Status = &Status{LoggedIn: false, CurrentUser: nil}
+	if u == nil {
+		status.reset()
+	} else if matched, _ := regexp.MatchString(".*@cornell.edu", u.String()); !matched {
+		status.reset()
+		http.Redirect(w, r, "/logout", http.StatusFound)
+	} else {
+		status.set(true, u)
+	}
+	log.Printf("The user logged in is %v", u)
+	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c))
+	tiles := make([]Tile, 0, 10)
+	if _, err := qs.GetAll(c, &tiles); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//debug
+	//log.Print(tiles)
+
+	//serve the root template
+
+	funcMap := template.FuncMap{
+		"divide":  div,
+		"incr":    incr,
+		"cong":    congz,
+		"ustring": ustring,
+	}
+
+	//	fp3 := path.Join("templates", "welcome.html")
+	templ := template.Must(template.New("carousel.html").Funcs(funcMap).ParseFiles("templates/carousel.html"))
+	w.Header().Set("Content-Type", "text/html")
+	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status})
 }
