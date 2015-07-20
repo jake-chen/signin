@@ -162,8 +162,7 @@
     {{if cong $tmp}}
     <div class="row featurette">
     {{end}}
-    <div class="col-md-6">
-      <div class="col-md-4">
+      <div class="col-md-2">
           <!---{{with .Name}}
           <h2 class="featurette-heading text-center" id="{{.}}_name">{{.}}</h2> 
           {{else}}
@@ -178,11 +177,11 @@
 <!--        <div class="col-md-{{divide 12 $numcols}}">-->
 
           {{with .Imgref}}
-          <img class="featurette-image img-test" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
+          <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
           {{end}}
 <!--        </div>-->
       </div>
-      <div class="col-md-8">
+      <div class="col-md-4">
         {{with .Name}}
           <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> 
           {{else}}
@@ -198,7 +197,6 @@
 <!--        <div class="col-md-{{divide 12 $numcols}}">-->
         {{end}}
         </div>
-      </div>
     {{if not (cong $tmp)}}
     </div>
     <hr class="featurette-divider">
