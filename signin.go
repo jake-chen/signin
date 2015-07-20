@@ -1,11 +1,13 @@
 package signin
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"regexp"
+	"time"
 
 	"appengine"
 	"appengine/blobstore"
@@ -15,13 +17,24 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const FALL = 0
+const SPRING = 1
+
+type Period struct {
+	Semester int //either SPRING or FALL
+	Year     int
+}
+
 //a Tile represents a slot for a team on the buildboard
 type Tile struct {
-	Name     string
-	Desc     string
-	Category string
-	Imgref   string
-	Creator  string
+	Name       string
+	Desc       string
+	Category   string
+	Imgref     string
+	Creator    []string
+	LastUpdate time.Time
+	UpdatedBy  string
+	Period     Period
 }
 
 //the user's logged in status as a struct wrapper
@@ -38,6 +51,15 @@ func (s *Status) reset() {
 func (s *Status) set(b bool, u *user.User) {
 	s.LoggedIn = b
 	s.CurrentUser = u
+}
+
+func contains(s []string, a string) bool {
+	for _, b := range s {
+		if a == b {
+			return true
+		}
+	}
+	return false
 }
 
 //google app engine init function
@@ -105,22 +127,29 @@ func logout(w http.ResponseWriter, r *http.Request) {
 
 //serves as the ancestor entity for the datastore
 //helps with strong consistency for child entities
-func tileRootKey(c appengine.Context) *datastore.Key {
-	return datastore.NewKey(c, "Tile", "home_tiles", 0, nil)
+func tileRootKey(c appengine.Context, semester int, year int) *datastore.Key {
+	now_str := fmt.Sprintf("%v_%v", semester, year)
+	return datastore.NewKey(c, "Tile", now_str, 0, nil)
 }
 
-//root view
+//keep track of what the current semester is on the server side
+func currentSemesterKey(c appengine.Context) *datastore.Key {
+	return datastore.NewKey(c, "Date", "current", 0, nil)
+}
+
+//root view: default view is the current semester's projects
 func root(w http.ResponseWriter, r *http.Request) {
 	renderRoot(w, r, nil)
 }
 
+//use this to view projects from past semesters, rather than filter by category
 func filter(w http.ResponseWriter, r *http.Request) {
 	log.Println("POST request made!")
 	log.Println(r.FormValue("filter_type"))
-	renderRoot(w, r, []string{r.FormValue("filter_type")})
+	renderRoot(w, r, []int{1, 2011})
 }
 
-func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
+func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 	c := appengine.NewContext(r)
 	//log.Println(c)
 	u := user.Current(c)
@@ -135,11 +164,24 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	} else {
 		status.set(true, u)
 	}
-	log.Printf("The user logged in is %v", u)
-	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c))
-	if filter != nil {
-		qs = qs.Filter("Name =", filter[0])
+	var now Period
+	e1 := datastore.Get(c, currentSemesterKey(c), &now)
+	if e1 != nil {
+		if e1 == datastore.ErrNoSuchEntity {
+			now.Semester = 1
+			now.Year = 2014
+		} else {
+			log.Println("DATASTORE PERIOD ERROR")
+			http.Error(w, e1.Error(), http.StatusInternalServerError)
+		}
 	}
+	var tileKey *datastore.Key
+	if filter != nil {
+		tileKey = tileRootKey(c, filter[0], filter[1])
+	} else {
+		tileKey = tileRootKey(c, now.Semester, now.Year)
+	}
+	qs := datastore.NewQuery("Tile").Ancestor(tileKey).Order("-LastUpdate")
 	tiles := make([]Tile, 0, 10)
 	if _, err := qs.GetAll(c, &tiles); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -152,10 +194,12 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []string) {
 	//serve the root template
 
 	funcMap := template.FuncMap{
-		"divide":  div,
-		"incr":    incr,
-		"cong":    congz,
-		"ustring": ustring,
+		"divide":   div,
+		"incr":     incr,
+		"cong":     congz,
+		"ustring":  ustring,
+		"contains": contains,
+		"isAdmin":  isAdmin,
 	}
 
 	//	fp3 := path.Join("templates", "welcome.html")
@@ -192,6 +236,13 @@ func ustring(u *user.User) string {
 	}
 }
 
+func isAdmin(u *user.User) bool {
+	if u == nil {
+		return false
+	}
+	return u.Admin
+}
+
 func submit(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	blobs, other, err := blobstore.ParseUpload(r)
@@ -202,14 +253,24 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		c.Errorf("%v", err)
 		return
 	}
+	members := make([]string, 0)
+	members = append(members, user.Current(c).String())
+	var now Period
+	//	datastore.Get(c, currentSemesterKey(c), &now)
+	now.Semester = 1
+	now.Year = 2014
 	newdata := Tile{
-		Name:     string(other["inputName"][0]),
-		Desc:     string(other["textArea"][0]),
-		Category: string(other["inputCategory"][0]),
-		Imgref:   string(blobs["inputFile"][0].BlobKey),
-		Creator:  string(user.Current(c).String()),
+		Name:       string(other["inputName"][0]),
+		Desc:       string(other["textArea"][0]),
+		Category:   string(other["inputCategory"][0]),
+		Imgref:     string(blobs["inputFile"][0].BlobKey),
+		Creator:    members,
+		LastUpdate: time.Now(),
+		UpdatedBy:  string(user.Current(c).String()),
+		Period:     now,
 	}
-	key := datastore.NewKey(c, "Tile", newdata.Name, 0, tileRootKey(c))
+	log.Println(newdata)
+	key := datastore.NewKey(c, "Tile", newdata.Name, 0, tileRootKey(c, now.Semester, now.Year))
 	_, keyerr := datastore.Put(c, key, &newdata)
 	if keyerr != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -227,9 +288,11 @@ func serve(w http.ResponseWriter, r *http.Request) {
 func delete(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	var dTile Tile
-	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c))
+	var now Period
+	datastore.Get(c, currentSemesterKey(c), &now)
+	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, now.Semester, now.Year))
 	datastore.Get(c, k, &dTile)
-	if u := user.Current(c); dTile.Creator != u.String() {
+	if u := user.Current(c); !contains(dTile.Creator, u.String()) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	} else {
@@ -249,11 +312,13 @@ func delete(w http.ResponseWriter, r *http.Request) {
 
 func edit(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	var now Period
+	datastore.Get(c, currentSemesterKey(c), &now)
 	arr := regexp.MustCompile("_").Split(r.FormValue("id"), 2)
 	name := arr[0]
 	field := arr[1]
 	value := r.FormValue("value")
-	k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c))
+	k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c, now.Semester, now.Year))
 	var uTile Tile
 	datastore.Get(c, k, &uTile)
 	switch field {
@@ -264,6 +329,7 @@ func edit(w http.ResponseWriter, r *http.Request) {
 		uTile.Desc = value
 		break
 	}
+	uTile.LastUpdate = time.Now()
 	datastore.Put(c, k, &uTile)
 	w.Write([]byte(uTile.Desc))
 }
@@ -283,8 +349,11 @@ func carousel(w http.ResponseWriter, r *http.Request) {
 	} else {
 		status.set(true, u)
 	}
+	var now Period
+	datastore.Get(c, currentSemesterKey(c), &now)
+
 	log.Printf("The user logged in is %v", u)
-	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c))
+	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c, now.Semester, now.Year))
 	tiles := make([]Tile, 0, 10)
 	if _, err := qs.GetAll(c, &tiles); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -297,10 +366,12 @@ func carousel(w http.ResponseWriter, r *http.Request) {
 	//serve the root template
 
 	funcMap := template.FuncMap{
-		"divide":  div,
-		"incr":    incr,
-		"cong":    congz,
-		"ustring": ustring,
+		"divide":   div,
+		"incr":     incr,
+		"cong":     congz,
+		"ustring":  ustring,
+		"contains": contains,
+		"isAdmin":  isAdmin,
 	}
 
 	//	fp3 := path.Join("templates", "welcome.html")

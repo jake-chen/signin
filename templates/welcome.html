@@ -8,7 +8,7 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="">
   <meta name="author" content="">
-<!--  <link rel="icon" href="../../favicon.ico">-->
+  <!--  <link rel="icon" href="../../favicon.ico">-->
 
   <title>Carousel Template for Bootstrap</title>
 
@@ -54,7 +54,9 @@
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              {{$stats := index . "LoggedIn"}} {{with $stats}} {{if .LoggedIn}}
+              {{$stats := index . "LoggedIn"}} {{if isAdmin $stats.CurrentUser}}
+              <li><a href="#" data-toggle="modal" data-target="#dateModal">Set Semester</a></li>
+              {{end}} {{with $stats}} {{if .LoggedIn}}
               <li><a href="logout">Log out</a></li>
               {{else}}
               <li><a href="login">Log in</a></li>
@@ -69,7 +71,7 @@
 
   <!-- Carousel
     ================================================== -->
- <!-- <div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <!-- <div id="myCarousel" class="carousel slide" data-ride="carousel">
      Indicators 
     <ol class="carousel-indicators">
       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -143,65 +145,52 @@
       </div>
     </div>
     </form>-->
-  
-  {{$numcols := 2}}
-  {{with $stats}} 
-    {{if .LoggedIn}}
+
+    {{$numcols := 2}} {{with $stats}} {{if .LoggedIn}}
     <div class="jumbotron">
       <h1>Welcome!</h1>
       <p>Project not listed? Add yours to the system here.</p>
       <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">New Item</button>
     </div>
-    {{end}} 
-  {{end}} 
-  
-  <!--TILES BEGIN HERE-->
-  {{range $count, $val := (index . "Tiles")}}
-    {{$name := .Name}}
-    {{$tmp := $count}}
-    {{if cong $tmp}}
-    <div class="row featurette">
-    {{end}}
-      <div class="col-md-6">
-        {{if (eq .Creator (ustring $stats.CurrentUser))}}
-        <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a>
-<!--        <div class="col-md-{{divide 12 $numcols}}">-->
-        {{end}}
-          {{with .Name}}
-          <h2 class="featurette-heading text-center" id="{{.}}_name">{{.}}</h2> 
-          {{else}}
-          <h2 class="featurette-heading">First Featurette Heading.</h2> 
-          {{end}} 
-          {{with .Desc}}
-          <p class="lead editable_textarea text-justify pad-left pad-right" id="{{$name}}_desc">{{.}}</p>
-          {{else}}
-          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-          {{end}}
-<!--        </div>-->
-<!--        <div class="col-md-{{divide 12 $numcols}}">-->
-          {{with .Imgref}}
-          <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
-          {{end}}
-<!--        </div>-->
-      </div>
-    {{if not (cong $tmp)}}
-    </div>
-    <hr class="featurette-divider">
-    {{end}}
-  {{end}}
-    <!-- /END THE FEATURETTES --> 
+    {{end}} {{end}}
 
-  {{if not (cong (index . "Tiles" | len))}}
+    <!--TILES BEGIN HERE-->
+    {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$tmp := $count}} {{if cong $tmp}}
+    <div class="row featurette">
+      {{end}}
+      <div class="col-md-6">
+        {{if (contains .Creator (ustring $stats.CurrentUser))}}
+        <a class="pull-right btn-sm" href="#" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-pencil icon-white"></i></a> {{end}} {{if isAdmin $stats.CurrentUser}}
+        <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a>
+        <!--        <div class="col-md-{{divide 12 $numcols}}">-->
+        {{end}} {{with .Name}}
+        <h2 class="featurette-heading text-center" id="{{.}}_name"><a href="/teams/{{.}}">{{.}}</a></h2> {{else}}
+        <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
+        <p class="lead editable_textarea text-justify pad-left pad-right" id="{{$name}}_desc">{{.}}</p>
+        {{else}}
+        <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        {{end}}
+        <!--        </div>-->
+        <!--        <div class="col-md-{{divide 12 $numcols}}">-->
+        {{with .Imgref}}
+        <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
+        <!--        </div>-->
+      </div>
+      {{if not (cong $tmp)}}
+    </div>
+    <hr class="featurette-divider"> {{end}} {{end}}
+    <!-- /END THE FEATURETTES -->
+
+    {{if not (cong (index . "Tiles" | len))}}
   </div>
-  <hr class="featurette-divider">
-  {{end}}
-  
-  
-    <!-- FOOTER -->
-    <footer>
-      <p class="pull-right"><a href="#">Back to top</a></p>
-      <p>&copy; 2015 Cornell Tech</p>
-    </footer>
+  <hr class="featurette-divider"> {{end}}
+
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="pull-right"><a href="#">Back to top</a></p>
+    <p>&copy; 2015 Cornell Tech</p>
+  </footer>
 
   </div>
   <!-- /.container -->
@@ -277,66 +266,61 @@
     </div>
   </div>
 
+  <!-- Modal -->
+  <div id="dateModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Set the current semester</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form" class="form-horizontal" enctype="multipart/form-data" method="POST" action='/semester'>
+            <fieldset>
+              <div class="form-group">
+                <label for="inputSemester" class="col-lg-2 control-label">Semester</label>
+                <div class="col-lg-10">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="inputSemester">Fall</label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="inputSemester">Spring</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputYear" class="col-lg-2 control-label">Category</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" name="inputYear" id="inputYear" placeholder="Year" required>
+                </div>
+              </div>
+              <div class="col-lg-10 col-lg-offset-2">
+                <button type="reset" class="btn btn-default">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+        </div>
+        </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
   <!-- Bootstrap core JavaScript
     ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="/static/bootstrap.js"></script>
   <script src="/static/jquery.jeditable.js"></script>
-  <script type="text/javascript">
-    $(window).resize(methodToFixLayout);
-    $(window).ready(methodToFixLayout);
-    $(document).ready(function() {$(".editable_textarea").editable("/edit", { 
-      indicator : "<img src='img/indicator.gif'>",
-      type   : 'textarea',
-      submitdata: { _method: "put" },
-      select : true,
-      submit : 'OK',
-      cancel : 'cancel',
-      cssclass : "editable"
-  });});
-    
-    
-    function methodToFixLayout(e) {
-      var winHeight = $(window).height();
-      var winWidth = $(window).width();
-      if (winWidth < 1600) {
-        $(".carousel").css("height", winWidth / 16 * 9);
-        $(".carousel .item").css("height", winWidth / 16 * 9);
-      } else {
-        $(".carousel").css("height", "900");
-        $(".carousel .item").css("height", "900");
-      }
-    }
-
-    function post(path, params, method) {
-    method = method || "post"; // Set method to post by default if not specified.
-
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
-
-    for(var key in params) {
-        if(params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
-
-            form.appendChild(hiddenField);
-         }
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-}
-    
-    function rmtile(e,data) {
-      post("/delete/",{name:data}, "post");
-    }
-  </script>
+  <script src="static/buildboard.js"></script>
 </body>
 
 </html>
