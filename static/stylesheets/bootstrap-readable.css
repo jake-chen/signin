@@ -1131,10 +1131,18 @@ img {
 }
 
 .img-responsive {
-  display: block;
-  max-width: 70%;
-  min-width: 70%;
+  /*width: 100%;
   height: auto;
+  float: none;
+  display:inline-block;
+  vertical-align: middle;*/
+}
+.img-test{
+  width: 100%;
+  height: auto;
+  float: none;
+  display:inline-block;
+  vertical-align: middle;
 }
 .img-rounded {
   border-radius: 6px;
@@ -1159,7 +1167,7 @@ hr {
   margin-top: 22px;
   margin-bottom: 22px;
   border: 0;
-  border-top: 1px solid #eeeeee;
+  /*border-top: 1px solid #eeeeee;*/
 }
 .sr-only {
   position: absolute;

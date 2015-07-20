@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 	"time"
 
 	"appengine"
@@ -83,6 +84,7 @@ func init() {
 
 	http.HandleFunc("/edit", edit)
 
+	http.HandleFunc("/semester", semester)
 	http.HandleFunc("/carousel", carousel)
 	//handles root view
 	http.Handle("/", r)
@@ -144,9 +146,11 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 //use this to view projects from past semesters, rather than filter by category
 func filter(w http.ResponseWriter, r *http.Request) {
+	sem, _ := strconv.Atoi(r.FormValue("semester"))
+	yr, _ := strconv.Atoi(r.FormValue("year"))
 	log.Println("POST request made!")
-	log.Println(r.FormValue("filter_type"))
-	renderRoot(w, r, []int{1, 2011})
+	log.Println(r.FormValue("semester"), r.FormValue("year"))
+	renderRoot(w, r, []int{sem, yr})
 }
 
 func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
@@ -256,9 +260,10 @@ func submit(w http.ResponseWriter, r *http.Request) {
 	members := make([]string, 0)
 	members = append(members, user.Current(c).String())
 	var now Period
-	//	datastore.Get(c, currentSemesterKey(c), &now)
-	now.Semester = 1
-	now.Year = 2014
+	datastore.Get(c, currentSemesterKey(c), &now)
+	//now.Semester = 1
+	//now.Year = 2014
+	log.Println(now)
 	newdata := Tile{
 		Name:       string(other["inputName"][0]),
 		Desc:       string(other["textArea"][0]),
@@ -289,6 +294,8 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	var dTile Tile
 	var now Period
+	now.Semester = 1
+	now.Year = 2014
 	datastore.Get(c, currentSemesterKey(c), &now)
 	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, now.Semester, now.Year))
 	datastore.Get(c, k, &dTile)
@@ -332,6 +339,31 @@ func edit(w http.ResponseWriter, r *http.Request) {
 	uTile.LastUpdate = time.Now()
 	datastore.Put(c, k, &uTile)
 	w.Write([]byte(uTile.Desc))
+}
+
+func semester(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	var now Period
+	sem_str := r.FormValue("inputSemester")
+	yr_str := r.FormValue("inputYear")
+	var sem int
+	log.Println(sem_str)
+	log.Println(yr_str)
+	if sem_str == "Spring" {
+		sem = SPRING
+	} else if sem_str == "Fall" {
+		sem = FALL
+	} else {
+		log.Println("passed in a semester that isn't spring or fall")
+	}
+	yr, err := strconv.Atoi(yr_str)
+	if err != nil {
+		panic("parse error; year passed in is not an int")
+	}
+	now.Semester = sem
+	now.Year = yr
+	datastore.Put(c, currentSemesterKey(c), &now)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func carousel(w http.ResponseWriter, r *http.Request) {

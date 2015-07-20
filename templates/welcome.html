@@ -33,7 +33,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Project name</a>
+            <a class="navbar-brand" href="#">Cornell Tech Buildboard</a>
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -41,21 +41,19 @@
               <li><a href="#about">About</a></li>
               <li><a href="/carousel">Presentation view</a></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Projects<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li class="dropdown-header">Nav header</li>
-                  <li><a href="#">Separated link</a></li>
-                  <li><a href="#">One more separated link</a></li>
+                  <li><a href="/companyprojects2014.html">Fall 2014</a></li>
                 </ul>
               </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Startup Studio<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/startupstudio2015.html">Spring 2015</a></li>
+                </ul>
+              </li>
               {{$stats := index . "LoggedIn"}} {{if isAdmin $stats.CurrentUser}}
-              <li><a href="#" data-toggle="modal" data-target="#dateModal">Set Semester</a></li>
+              <li><a href="#" data-toggle="modal" data-target="#dateModal"><i class="glyphicon glyphicon-wrench"></i></a></li>
               {{end}} {{with $stats}} {{if .LoggedIn}}
               <li><a href="logout">Log out</a></li>
               {{else}}
@@ -159,22 +157,20 @@
     <div class="row featurette">
       {{end}}
       <div class="col-md-6">
-        {{if (contains .Creator (ustring $stats.CurrentUser))}}
-        <a class="pull-right btn-sm" href="#" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-pencil icon-white"></i></a> {{end}} {{if isAdmin $stats.CurrentUser}}
-        <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a>
-        <!--        <div class="col-md-{{divide 12 $numcols}}">-->
-        {{end}} {{with .Name}}
-        <h2 class="featurette-heading text-center" id="{{.}}_name"><a href="/teams/{{.}}">{{.}}</a></h2> {{else}}
-        <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
-        <p class="lead editable_textarea text-justify pad-left pad-right" id="{{$name}}_desc">{{.}}</p>
-        {{else}}
-        <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-        {{end}}
-        <!--        </div>-->
-        <!--        <div class="col-md-{{divide 12 $numcols}}">-->
-        {{with .Imgref}}
-        <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
-        <!--        </div>-->
+        <div class="col-md-4">
+          {{with .Imgref}}
+          <img class="featurette-image img-test" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
+        </div>
+        <div class="col-md-8">
+          {{with .Name}}
+          <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> {{else}}
+          <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
+          <p class="lead editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
+          {{else}}
+          <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          {{end}} {{if isAdmin $stats.CurrentUser}}
+          <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
+        </div>
       </div>
       {{if not (cong $tmp)}}
     </div>
@@ -217,20 +213,26 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputCategory" class="col-lg-2 control-label">Category</label>
+                <label for="inputGroup" class="col-lg-2 control-label">Team Members</label>
                 <div class="col-lg-10">
-                  <input type="text" class="form-control" name="inputCategory" id="inputCategory" placeholder="Your Project Category" required>
+                  <input type="text" class="form-control" name="inputGroup" id="inputGroup" placeholder="Team members' first names separated by commas" required>
                 </div>
               </div>
               <div class="form-group">
-                <label for="textArea" class="col-lg-2 control-label">Description</label>
+                <label for="inputCategory" class="col-lg-2 control-label">Question</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" name="inputCategory" id="inputCategory" placeholder="Company Challenge Question" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="textArea" class="col-lg-2 control-label">Narrative</label>
                 <div class="col-lg-10">
                   <textarea class="form-control" rows="3" name="textArea" id="textArea" required></textarea>
                   <span class="help-block">A short description of what your project does, or the company challenge question</span>
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputFile" class="col-lg-2 control-label">Team Picture</label>
+                <label for="inputFile" class="col-lg-2 control-label">Company Logo</label>
                 <div class="col-lg-10">
                   <input type="file" class="form-control" name="inputFile" id="inputFile" accept="image/*" onchange="loadFile(event)" required>
                   <img class="img-responsive" id="output" />
@@ -284,16 +286,16 @@
                 <div class="col-lg-10">
                   <div class="radio">
                     <label>
-                      <input type="radio" name="inputSemester">Fall</label>
+                      <input type="radio" name="inputSemester" value="Fall">Fall</label>
                   </div>
                   <div class="radio">
                     <label>
-                      <input type="radio" name="inputSemester">Spring</label>
+                      <input type="radio" name="inputSemester" value="Spring">Spring</label>
                   </div>
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputYear" class="col-lg-2 control-label">Category</label>
+                <label for="inputYear" class="col-lg-2 control-label">Year</label>
                 <div class="col-lg-10">
                   <input type="text" class="form-control" name="inputYear" id="inputYear" placeholder="Year" required>
                 </div>
@@ -302,16 +304,15 @@
                 <button type="reset" class="btn btn-default">Cancel</button>
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
+            </fieldset>
+          </form>
         </div>
-        </fieldset>
-        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
 
-  </div>
+    </div>
   </div>
 
   <!-- Bootstrap core JavaScript
