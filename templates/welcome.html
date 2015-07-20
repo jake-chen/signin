@@ -152,6 +152,7 @@
     </div>
     {{end}} {{end}}
 
+
     <!--TILES BEGIN HERE-->
     {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$tmp := $count}} {{if cong $tmp}}
     <div class="row featurette">
@@ -159,12 +160,17 @@
       <div class="col-md-6">
         <div class="col-md-4">
           {{with .Imgref}}
-          <img class="featurette-image img-test" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
-        </div>
-        <div class="col-md-8">
-          {{with .Name}}
-          <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> {{else}}
-          <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
+          <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
+          {{end}}
+<!--        </div>-->
+      </div>
+      <div class="col-md-4">
+        {{with .Name}}
+          <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> 
+          {{else}}
+          <h2 class="featurette-heading">First Featurette Heading.</h2> 
+          {{end}} 
+          {{with .Desc}}
           <p class="lead editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>

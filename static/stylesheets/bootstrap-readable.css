@@ -1131,18 +1131,12 @@ img {
 }
 
 .img-responsive {
-  /*width: 100%;
+  min-width: 100%;
+  max-width: 100%;
   height: auto;
-  float: none;
-  display:inline-block;
-  vertical-align: middle;*/
-}
-.img-test{
-  width: 100%;
-  height: auto;
-  float: none;
-  display:inline-block;
   vertical-align: middle;
+  display:inline-block;
+  float: middle;
 }
 .img-rounded {
   border-radius: 6px;
