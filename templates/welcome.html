@@ -162,11 +162,8 @@
     {{if cong $tmp}}
     <div class="row featurette">
     {{end}}
-      <div class="col-md-2">
-        {{if (eq .Creator (ustring $stats.CurrentUser))}}
-        <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a>
-<!--        <div class="col-md-{{divide 12 $numcols}}">-->
-        {{end}}
+    <div class="col-md-6">
+      <div class="col-md-4">
           <!---{{with .Name}}
           <h2 class="featurette-heading text-center" id="{{.}}_name">{{.}}</h2> 
           {{else}}
@@ -181,13 +178,13 @@
 <!--        <div class="col-md-{{divide 12 $numcols}}">-->
 
           {{with .Imgref}}
-          <img class="featurette-image img-responsive center-block" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
+          <img class="featurette-image img-test" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
           {{end}}
 <!--        </div>-->
       </div>
-      <div class="col-md-4">
+      <div class="col-md-8">
         {{with .Name}}
-          <h2 class="featurette-heading text-center" id="{{.}}_name">{{.}}</h2> 
+          <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> 
           {{else}}
           <h2 class="featurette-heading">First Featurette Heading.</h2> 
           {{end}} 
@@ -196,7 +193,12 @@
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}}
+        {{if (eq .Creator (ustring $stats.CurrentUser))}}
+          <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a>
+<!--        <div class="col-md-{{divide 12 $numcols}}">-->
+        {{end}}
         </div>
+      </div>
     {{if not (cong $tmp)}}
     </div>
     <hr class="featurette-divider">
@@ -241,20 +243,26 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputCategory" class="col-lg-2 control-label">Category</label>
+                <label for="inputGroup" class="col-lg-2 control-label">Team Members</label>
                 <div class="col-lg-10">
-                  <input type="text" class="form-control" name="inputCategory" id="inputCategory" placeholder="Your Project Category" required>
+                  <input type="text" class="form-control" name="inputGroup" id="inputGroup" placeholder="Team members' first names separated by commas" required>
                 </div>
               </div>
               <div class="form-group">
-                <label for="textArea" class="col-lg-2 control-label">Description</label>
+                <label for="inputCategory" class="col-lg-2 control-label">Question</label>
+                <div class="col-lg-10">
+                  <input type="text" class="form-control" name="inputCategory" id="inputCategory" placeholder="Company Challenge Question" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="textArea" class="col-lg-2 control-label">Narrative</label>
                 <div class="col-lg-10">
                   <textarea class="form-control" rows="3" name="textArea" id="textArea" required></textarea>
                   <span class="help-block">A short description of what your project does, or the company challenge question</span>
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputFile" class="col-lg-2 control-label">Team Picture</label>
+                <label for="inputFile" class="col-lg-2 control-label">Company Logo</label>
                 <div class="col-lg-10">
                   <input type="file" class="form-control" name="inputFile" id="inputFile" accept="image/*" onchange="loadFile(event)" required>
                   <img class="img-responsive" id="output" />
