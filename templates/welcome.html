@@ -43,13 +43,17 @@
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Projects<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="/companyprojects2014.html">Fall 2014</a></li>
+                  {{range index . "ccs"}}
+                  <li><a href="#">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
+                  {{end}}
                 </ul>
               </li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Startup Studio<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="/startupstudio2015.html">Spring 2015</a></li>
+                  {{range index . "sss"}}
+                  <li><a href="#">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
+                  {{end}}
                 </ul>
               </li>
               {{$stats := index . "LoggedIn"}} {{if isAdmin $stats.CurrentUser}}
@@ -144,15 +148,7 @@
     </div>
     </form>-->
 
-    {{$numcols := 2}} {{with $stats}} {{if .LoggedIn}}
-    <div class="jumbotron">
-      <h1>Welcome!</h1>
-      <p>Project not listed? Add yours to the system here.</p>
-      <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">New Item</button>
-    </div>
-    {{end}} {{end}}
-
-
+    {{$numcols := 2}}
     <!--TILES BEGIN HERE-->
     {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$tmp := $count}} {{if cong $tmp}}
     <div class="row featurette">
@@ -160,17 +156,13 @@
       <div class="col-md-6">
         <div class="col-md-4">
           {{with .Imgref}}
-          <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
-          {{end}}
-<!--        </div>-->
-      </div>
-      <div class="col-md-4">
-        {{with .Name}}
-          <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> 
-          {{else}}
-          <h2 class="featurette-heading">First Featurette Heading.</h2> 
-          {{end}} 
-          {{with .Desc}}
+          <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> {{end}}
+          <!--        </div>-->
+        </div>
+        <div class="col-md-4">
+          {{with .Name}}
+          <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> {{else}}
+          <h2 class="featurette-heading">First Featurette Heading.</h2> {{end}} {{with .Desc}}
           <p class="lead editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
@@ -187,6 +179,14 @@
   </div>
   <hr class="featurette-divider"> {{end}}
 
+  {{with $stats}} {{if .LoggedIn}}
+    <div class="jumbotron">
+      <h1>Welcome!</h1>
+      <p>Project not listed? Add yours to the system here.</p>
+      <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">New Item</button>
+    </div>
+    {{end}} {{end}}
+  
 
   <!-- FOOTER -->
   <footer>

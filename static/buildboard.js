@@ -1,5 +1,5 @@
- $(window).resize(methodToFixLayout);
-    $(window).ready(methodToFixLayout);
+/* $(window).resize(methodToFixLayout);
+    $(window).ready(methodToFixLayout);*/
     $(document).ready(function() {$(".editable_textarea").editable("/edit", { 
       indicator : "<img src='img/indicator.gif'>",
       type   : 'textarea',

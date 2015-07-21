@@ -28,14 +28,15 @@ type Period struct {
 
 //a Tile represents a slot for a team on the buildboard
 type Tile struct {
-	Name       string
-	Desc       string
-	Category   string
-	Imgref     string
-	Creator    []string
-	LastUpdate time.Time
-	UpdatedBy  string
-	Period     Period
+	Name       string    //team name
+	Desc       string    //narrative
+	Category   string    //company challenge question
+	Imgref     string    //company logo
+	Members    []string  //who is on this team
+	Creator    string    //who made the tile
+	LastUpdate time.Time //last update
+	UpdatedBy  string    //who updated it last
+	Period     Period    //semester and year
 }
 
 //the user's logged in status as a struct wrapper
@@ -61,6 +62,10 @@ func contains(s []string, a string) bool {
 		}
 	}
 	return false
+}
+
+func (p *Period) String() string {
+	return fmt.Sprintf("%v_%v", p.Semester, p.Year)
 }
 
 //google app engine init function
@@ -134,6 +139,14 @@ func tileRootKey(c appengine.Context, semester int, year int) *datastore.Key {
 	return datastore.NewKey(c, "Tile", now_str, 0, nil)
 }
 
+func CCRoot(c appengine.Context) *datastore.Key {
+	return datastore.NewKey(c, "Date", "company_challenges", 0, nil)
+}
+
+func SSRoot(c appengine.Context) *datastore.Key {
+	return datastore.NewKey(c, "Date", "startup_studio", 0, nil)
+}
+
 //keep track of what the current semester is on the server side
 func currentSemesterKey(c appengine.Context) *datastore.Key {
 	return datastore.NewKey(c, "Date", "current", 0, nil)
@@ -170,6 +183,7 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 	}
 	var now Period
 	e1 := datastore.Get(c, currentSemesterKey(c), &now)
+	log.Printf("The value of now is %v", &now)
 	if e1 != nil {
 		if e1 == datastore.ErrNoSuchEntity {
 			now.Semester = 1
@@ -191,7 +205,13 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	ccperiods := make([]Period, 0, 10)
+	ssperiods := make([]Period, 0, 10)
+	fallqs := datastore.NewQuery("Date").Ancestor(CCRoot(c)).Order("-Semester").Order("-Year")
+	springqs := datastore.NewQuery("Date").Ancestor(SSRoot(c)).Order("-Semester").Order("-Year")
+	fallqs.GetAll(c, &ccperiods)
+	springqs.GetAll(c, &ssperiods)
+	log.Println(ccperiods, ssperiods)
 	//debug
 	//log.Print(tiles)
 
@@ -214,7 +234,7 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 		panic("oh no!")
 	}
 	w.Header().Set("Content-Type", "text/html")
-	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status, "uploadURL": uploadURL})
+	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status, "uploadURL": uploadURL, "ccs": ccperiods, "sss": ssperiods})
 
 }
 
@@ -257,19 +277,17 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		c.Errorf("%v", err)
 		return
 	}
-	members := make([]string, 0)
-	members = append(members, user.Current(c).String())
+	members := regexp.MustCompile(",").Split(string(other["inputGroup"][0]), -1)
 	var now Period
 	datastore.Get(c, currentSemesterKey(c), &now)
-	//now.Semester = 1
-	//now.Year = 2014
 	log.Println(now)
 	newdata := Tile{
 		Name:       string(other["inputName"][0]),
 		Desc:       string(other["textArea"][0]),
 		Category:   string(other["inputCategory"][0]),
 		Imgref:     string(blobs["inputFile"][0].BlobKey),
-		Creator:    members,
+		Members:    members,
+		Creator:    user.Current(c).String(),
 		LastUpdate: time.Now(),
 		UpdatedBy:  string(user.Current(c).String()),
 		Period:     now,
@@ -299,7 +317,7 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	datastore.Get(c, currentSemesterKey(c), &now)
 	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, now.Semester, now.Year))
 	datastore.Get(c, k, &dTile)
-	if u := user.Current(c); !contains(dTile.Creator, u.String()) {
+	if u := user.Current(c); !u.Admin {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	} else {
@@ -362,8 +380,27 @@ func semester(w http.ResponseWriter, r *http.Request) {
 	}
 	now.Semester = sem
 	now.Year = yr
-	datastore.Put(c, currentSemesterKey(c), &now)
+	updateSemesterData(c, &now)
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func updateSemesterData(c appengine.Context, p *Period) {
+	var then Period
+	if err := datastore.Get(c, currentSemesterKey(c), &then); err != nil {
+		log.Println("empty date store, safely inserting new period")
+		datastore.Put(c, currentSemesterKey(c), p)
+	} else {
+		//otherwise there is a current period set already, so we move it to the
+		//archived datastore first and then update the new period
+		var k *datastore.Key
+		if then.Semester == FALL {
+			k = datastore.NewKey(c, "Date", then.String(), 0, CCRoot(c))
+		} else {
+			k = datastore.NewKey(c, "Date", then.String(), 0, SSRoot(c))
+		}
+		datastore.Put(c, k, &then)
+		datastore.Put(c, currentSemesterKey(c), p)
+	}
 }
 
 func carousel(w http.ResponseWriter, r *http.Request) {
