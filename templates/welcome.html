@@ -174,7 +174,11 @@
           <p class="lead editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-          {{end}} {{if isAdmin $stats.CurrentUser}}
+          {{end}} 
+          {{with .Members}}
+          <p class="lead">{{.}}</p>
+          {{end}}
+          {{if isAdmin $stats.CurrentUser}}
           <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
         </div>
       </div>
