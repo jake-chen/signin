@@ -44,7 +44,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Projects<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   {{range index . "ccs"}}
-                  <li><a href="#">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
+                  <li><a href="#" onclick="post('/',{semester:{{.Semester}}, year:{{.Year}} })">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
                   {{end}}
                 </ul>
               </li>
@@ -52,7 +52,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Startup Studio<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   {{range index . "sss"}}
-                  <li><a href="#">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
+                  <li><a href=# onclick="post('/',{semester:{{.Semester}}, year:{{.Year}} })">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
                   {{end}}
                 </ul>
               </li>
