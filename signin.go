@@ -312,8 +312,6 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	var dTile Tile
 	var now Period
-	now.Semester = 1
-	now.Year = 2014
 	datastore.Get(c, currentSemesterKey(c), &now)
 	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, now.Semester, now.Year))
 	datastore.Get(c, k, &dTile)
@@ -385,22 +383,15 @@ func semester(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateSemesterData(c appengine.Context, p *Period) {
-	var then Period
-	if err := datastore.Get(c, currentSemesterKey(c), &then); err != nil {
-		log.Println("empty date store, safely inserting new period")
-		datastore.Put(c, currentSemesterKey(c), p)
+	var k *datastore.Key
+	if p.Semester == FALL {
+		k = datastore.NewKey(c, "Date", p.String(), 0, CCRoot(c))
 	} else {
-		//otherwise there is a current period set already, so we move it to the
-		//archived datastore first and then update the new period
-		var k *datastore.Key
-		if then.Semester == FALL {
-			k = datastore.NewKey(c, "Date", then.String(), 0, CCRoot(c))
-		} else {
-			k = datastore.NewKey(c, "Date", then.String(), 0, SSRoot(c))
-		}
-		datastore.Put(c, k, &then)
-		datastore.Put(c, currentSemesterKey(c), p)
+		k = datastore.NewKey(c, "Date", p.String(), 0, SSRoot(c))
 	}
+	//insert the new semester into the list of all available semesters and replace the current semester
+	datastore.Put(c, k, p)
+	datastore.Put(c, currentSemesterKey(c), p)
 }
 
 func carousel(w http.ResponseWriter, r *http.Request) {
