@@ -44,6 +44,6 @@ function post(path, params, method) {
     form.submit();
 }
     
-    function rmtile(e,data) {
-      post("/delete/",{name:data}, "post");
+    function rmtile(e,data, semester, year) {
+      post("/delete/",{name:data, semester:semester, year:year}, "post");
     }

@@ -34,6 +34,7 @@ type Tile struct {
 	Imgref     string    //company logo
 	Members    []string  //who is on this team
 	Creator    string    //who made the tile
+	CanEdit    []string  //who can edit this tile
 	LastUpdate time.Time //last update
 	UpdatedBy  string    //who updated it last
 	Period     Period    //semester and year
@@ -66,6 +67,10 @@ func contains(s []string, a string) bool {
 
 func (p *Period) String() string {
 	return fmt.Sprintf("%v_%v", p.Semester, p.Year)
+}
+
+func netID(u *user.User) string {
+	return regexp.MustCompile("@").Split(u.String(), 2)[0]
 }
 
 //google app engine init function
@@ -234,8 +239,13 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 		panic("oh no!")
 	}
 	w.Header().Set("Content-Type", "text/html")
-	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status, "uploadURL": uploadURL, "ccs": ccperiods, "sss": ssperiods})
-
+	templ.Execute(w, map[string]interface{}{
+		"Tiles":     tiles,
+		"LoggedIn":  status,
+		"uploadURL": uploadURL,
+		"ccs":       ccperiods,
+		"sss":       ssperiods,
+	})
 }
 
 func div(a int, b int) int {
@@ -278,6 +288,7 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	members := regexp.MustCompile(",").Split(string(other["inputGroup"][0]), -1)
+	editors := regexp.MustCompile(",").Split(string(other["inputEditors"][0]), -1)
 	var now Period
 	datastore.Get(c, currentSemesterKey(c), &now)
 	log.Println(now)
@@ -288,6 +299,7 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		Imgref:     string(blobs["inputFile"][0].BlobKey),
 		Members:    members,
 		Creator:    user.Current(c).String(),
+		CanEdit:    editors,
 		LastUpdate: time.Now(),
 		UpdatedBy:  string(user.Current(c).String()),
 		Period:     now,
@@ -311,9 +323,14 @@ func serve(w http.ResponseWriter, r *http.Request) {
 func delete(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	var dTile Tile
-	var now Period
-	datastore.Get(c, currentSemesterKey(c), &now)
-	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, now.Semester, now.Year))
+	//	var now Period
+	//	datastore.Get(c, currentSemesterKey(c), &now)
+	sem, e1 := strconv.Atoi(r.FormValue("semester"))
+	yr, e2 := strconv.Atoi(r.FormValue("year"))
+	if e1 != nil || e2 != nil {
+		panic("shouldn't happen; semester and year guaranteed to be ints")
+	}
+	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, sem, yr))
 	datastore.Get(c, k, &dTile)
 	if u := user.Current(c); !u.Admin {
 		http.Redirect(w, r, "/", http.StatusFound)
