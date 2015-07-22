@@ -158,20 +158,23 @@
         <div class="col-md-4">
           {{with .Imgref}}
 
-          <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
+          <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image">
           {{end}}
 
 <!--        </div>-->
         </div>
         <div class="col-md-8">
+          <div class="challenge">
         <!---{{with .Name}}
           <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> 
           {{else}}
           <h2 class="featurette-heading">First Featurette Heading.</h2> 
           {{end}} -->
           {{with .Category}}
-          <p class="lead"><b>{{.}}</b></p>
+          <!---<p class="lead"><b>{{.}}</b></p>-->
+          <span>{{.}}</span>
           {{end}}
+        </div>
           <!---{{with .Desc}}
           <p class="lead editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
           {{else}}
@@ -183,20 +186,22 @@
         </div>
     </div>
       <div class="row">
+        <div class="descrip">
         {{with .Desc}}
-          <p class="desc editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
+          <span><p class="desc editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
           {{else}}
           <p class="desc">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}} 
 
           {{with .Members}}
-          <p class="desc">{{.}}</p>
+          <p class="desc">{{.}}</p></span>
           {{end}}
 
           {{if isAdmin $stats.CurrentUser}}
           <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}},{{.Period.Semester}},{{.Period.Year}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
         </div>
       </div>
+    </div>
       {{if not (cong $tmp)}}
     </div>
     <hr class="featurette-divider"> {{end}} {{end}}
@@ -266,8 +271,7 @@
               <div class="form-group">
                 <label for="textArea" class="col-lg-2 control-label">Narrative</label>
                 <div class="col-lg-10">
-                  <textarea class="form-control" rows="3" name="textArea" id="textArea" required></textarea>
-                  <span class="help-block">A short description of what your project tries to achieve</span>
+                  <textarea class="form-control" rows="3" name="textArea" id="textArea" placeholder="A short description of what your project tries to achieve" required></textarea>
                 </div>
               </div>
               <div class="form-group">
