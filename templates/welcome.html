@@ -154,30 +154,45 @@
     <div class="row featurette">
       {{end}}
       <div class="col-md-6">
+        <div class="row">
         <div class="col-md-4">
           {{with .Imgref}}
 
           <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image"> 
           {{end}}
+
 <!--        </div>-->
-      </div>
-      <div class="col-md-8">
-        {{with .Name}}
+        </div>
+        <div class="col-md-8">
+        <!---{{with .Name}}
           <h2 class="featurette-heading" id="{{.}}_name">{{.}}</h2> 
           {{else}}
           <h2 class="featurette-heading">First Featurette Heading.</h2> 
-          {{end}} 
+          {{end}} -->
           {{with .Category}}
-          <h4>{{.}}</h4>
+          <p class="lead"><b>{{.}}</b></p>
           {{end}}
-          {{with .Desc}}
+          <!---{{with .Desc}}
           <p class="lead editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
           {{else}}
           <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
           {{end}} 
+
+          {{if isAdmin $stats.CurrentUser}}
+          <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}} -->
+        </div>
+    </div>
+      <div class="row">
+        {{with .Desc}}
+          <p class="desc editable_textarea text-justify" id="{{$name}}_desc">{{.}}</p>
+          {{else}}
+          <p class="desc">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          {{end}} 
+
           {{with .Members}}
-          <p class="lead">{{.}}</p>
+          <p class="desc">{{.}}</p>
           {{end}}
+
           {{if isAdmin $stats.CurrentUser}}
           <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
         </div>
