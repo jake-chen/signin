@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"appengine"
@@ -67,10 +68,6 @@ func contains(s []string, a string) bool {
 
 func (p *Period) String() string {
 	return fmt.Sprintf("%v_%v", p.Semester, p.Year)
-}
-
-func netID(u *user.User) string {
-	return regexp.MustCompile("@").Split(u.String(), 2)[0]
 }
 
 //google app engine init function
@@ -205,13 +202,13 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 		tileKey = tileRootKey(c, now.Semester, now.Year)
 	}
 	qs := datastore.NewQuery("Tile").Ancestor(tileKey).Order("-LastUpdate")
-	tiles := make([]Tile, 0, 10)
+	tiles := make([]Tile, 0)
 	if _, err := qs.GetAll(c, &tiles); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ccperiods := make([]Period, 0, 10)
-	ssperiods := make([]Period, 0, 10)
+	ccperiods := make([]Period, 0)
+	ssperiods := make([]Period, 0)
 	fallqs := datastore.NewQuery("Date").Ancestor(CCRoot(c)).Order("-Semester").Order("-Year")
 	springqs := datastore.NewQuery("Date").Ancestor(SSRoot(c)).Order("-Semester").Order("-Year")
 	fallqs.GetAll(c, &ccperiods)
@@ -229,6 +226,8 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 		"ustring":  ustring,
 		"contains": contains,
 		"isAdmin":  isAdmin,
+		"netID":    netID,
+		"format":   fmtMembers,
 	}
 
 	//	fp3 := path.Join("templates", "welcome.html")
@@ -262,6 +261,15 @@ func congz(a int) bool {
 	return a%2 == 0
 }
 
+//hardcoded tests for new row for the carousel
+func congzb(a int) bool {
+	return a%12 == 0
+}
+
+func congzc(a int) bool {
+	return a%12 == 11
+}
+
 func ustring(u *user.User) string {
 	if u == nil {
 		return ""
@@ -275,6 +283,14 @@ func isAdmin(u *user.User) bool {
 		return false
 	}
 	return u.Admin
+}
+
+func netID(u string) string {
+	return regexp.MustCompile("@").Split(u, 2)[0]
+}
+
+func fmtMembers(arr []string) string {
+	return strings.Join(arr, ", ")
 }
 
 func submit(w http.ResponseWriter, r *http.Request) {
@@ -354,24 +370,25 @@ func edit(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	var now Period
 	datastore.Get(c, currentSemesterKey(c), &now)
-	arr := regexp.MustCompile("_").Split(r.FormValue("id"), 2)
+	arr := regexp.MustCompile("_").Split(r.FormValue("id"), 3)
 	name := arr[0]
-	field := arr[1]
-	value := r.FormValue("value")
-	k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c, now.Semester, now.Year))
-	var uTile Tile
-	datastore.Get(c, k, &uTile)
-	switch field {
-	case "name":
-		uTile.Name = value
-		break
-	case "desc":
-		uTile.Desc = value
-		break
+	sem, e1 := strconv.Atoi(arr[1])
+	yr, e2 := strconv.Atoi(arr[2])
+	if e1 != nil || e2 != nil {
+		panic("neither year nor sem should be non-ints")
 	}
-	uTile.LastUpdate = time.Now()
-	datastore.Put(c, k, &uTile)
-	w.Write([]byte(uTile.Desc))
+	if now.Semester == sem && now.Year == yr {
+		value := r.FormValue("value")
+		k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c, sem, yr))
+		var uTile Tile
+		datastore.Get(c, k, &uTile)
+		uTile.Desc = value
+		uTile.LastUpdate = time.Now()
+		datastore.Put(c, k, &uTile)
+		w.Write([]byte(uTile.Desc))
+	} else {
+		w.Write([]byte("Edits discarded: cannot edit entries after the semester has ended"))
+	}
 }
 
 func semester(w http.ResponseWriter, r *http.Request) {
@@ -429,7 +446,6 @@ func carousel(w http.ResponseWriter, r *http.Request) {
 	var now Period
 	datastore.Get(c, currentSemesterKey(c), &now)
 
-	log.Printf("The user logged in is %v", u)
 	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c, now.Semester, now.Year))
 	tiles := make([]Tile, 0, 10)
 	if _, err := qs.GetAll(c, &tiles); err != nil {
@@ -445,7 +461,8 @@ func carousel(w http.ResponseWriter, r *http.Request) {
 	funcMap := template.FuncMap{
 		"divide":   div,
 		"incr":     incr,
-		"cong":     congz,
+		"congb":    congzb,
+		"congc":    congzc,
 		"ustring":  ustring,
 		"contains": contains,
 		"isAdmin":  isAdmin,
