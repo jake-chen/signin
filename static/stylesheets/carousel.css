@@ -150,6 +150,10 @@ body {
   font-size: 18px;
 }
 
+.col-md-4 {
+  height: 165px;
+}
+
 
 /*@media (min-width: 992px) {
   .featurette-heading {

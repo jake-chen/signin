@@ -156,10 +156,12 @@
       <div class="col-md-6">
         <div class="row">
         <div class="col-md-4">
+          <div class="centerimg"
           {{with .Imgref}}
 
           <img class="featurette-image img-responsive" src="serve/?blobKey={{.}}" alt="Generic placeholder image">
           {{end}}
+        </div>
 
 <!--        </div>-->
         </div>
@@ -196,10 +198,10 @@
           {{with .Members}}
           <p class="desc">{{.}}</p></span>
           {{end}}
+        </div>
 
           {{if isAdmin $stats.CurrentUser}}
           <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}},{{.Period.Semester}},{{.Period.Year}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
-        </div>
       </div>
     </div>
       {{if not (cong $tmp)}}
