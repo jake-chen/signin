@@ -91,9 +91,11 @@ sup {
 sub {
   bottom: -0.25em;
 }
+
 img {
   border: 0;
 }
+
 svg:not(:root) {
   overflow: hidden;
 }
@@ -6495,7 +6497,7 @@ button.close {
   z-index: 10;
   padding-top: 20px;
   padding-bottom: 20px;
-  color: #ffffff;
+  color: #000000;
   text-align: center;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
@@ -6956,8 +6958,8 @@ span {
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
+  font-family: "Raleway";
   font-size: 18px;
-  font-weight: bold;
   line-height: 1.4;     
 }
 

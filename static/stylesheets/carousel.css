@@ -58,7 +58,7 @@ body {
 /* Declare heights because of positioning of img element */
 .carousel .item {
   height: 800px;
-  background-color: #777;
+  background-color: #FFF;
 }
 .carousel-inner > .item > img {
   position: absolute;
@@ -133,6 +133,11 @@ body {
     font-size: 30px;
   }
 
+  .featurette-image {
+    max-height: 165;
+    max-width: 165;
+  }
+
   .pad-left {
     padding-left: 5%;
   }
@@ -157,6 +162,27 @@ body {
 
 .col-md-4 {
   height: 165px;
+}
+
+.frame {
+    height: 165px;      /* equals max image height */
+    width: 165px;
+    white-space: nowrap;
+    text-align: center; margin: 0;
+}
+
+.frame:before,
+.frame_before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.center img {
+    vertical-align: middle;
+    max-height: 165px;
+    max-width: 165px;
 }
 
 /*@media (min-width: 992px) {
