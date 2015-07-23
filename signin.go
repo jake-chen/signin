@@ -188,8 +188,9 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 	log.Printf("The value of now is %v", &now)
 	if e1 != nil {
 		if e1 == datastore.ErrNoSuchEntity {
-			now.Semester = 1
-			now.Year = 2014
+			now.Semester = 0
+			now.Year = 2015
+			updateSemesterData(c, &now)
 		} else {
 			log.Println("DATASTORE PERIOD ERROR")
 			http.Error(w, e1.Error(), http.StatusInternalServerError)
