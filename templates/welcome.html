@@ -38,7 +38,7 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="/">Home</a></li>
-              <li><a href="#about">About</a></li>
+              <li><a href="/about">About</a></li>
               <li><a href="/carousel">Presentation view</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Challenges<span class="caret"></span></a>
@@ -76,6 +76,9 @@
   <!-- Wrap the rest of the page in another container to center all the content. -->
 
   <div class="container marketing pad-top">
+    <div class="aboutdesc">
+    {{if (eq (index . "now").Semester 0)}} <h1>Company Challenges</h1> Cornell Tech Company Challenges inspire integrated teams of computer science, business, and information science Masters students to deliver new business ideas and prototypes in response to challenges posed by leading startups, companies, and nonprofits. {{else}} <h1>Startup Studio</h1> In Startup Studio students build a startup from the ground up, developing a pitch, deck, and prototype that can be shared with others, tested with users and leveraged as a launching pad for future endeavors. {{end}}
+  </div>
     <!-- START THE FEATURETTES -->
     {{$numcols := 2}}
     <!--TILES BEGIN HERE-->

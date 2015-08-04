@@ -185,6 +185,13 @@ body {
     max-width: 165px;
 }
 
+.aboutdesc {
+  padding-top: 2%;
+  padding-bottom: 2%;
+  padding-right: 5%;
+  padding-left: 5%;
+}
+
 /*@media (min-width: 992px) {
   .featurette-heading {
     margin-top: 120px;
