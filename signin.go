@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"lcs"
+	//	"lcs"
 
 	"appengine"
 	"appengine/blobstore"
@@ -386,7 +386,7 @@ func edit(w http.ResponseWriter, r *http.Request) {
 		k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c, sem, yr))
 		var uTile Tile
 		datastore.Get(c, k, &uTile)
-		log.Println(lcs.Diff(value, uTile.Desc))
+		//	log.Println(lcs.Diff(value, uTile.Desc))
 		uTile.Desc = value
 		uTile.LastUpdate = time.Now()
 		datastore.Put(c, k, &uTile)
