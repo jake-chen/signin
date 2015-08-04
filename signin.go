@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"lcs"
+
 	"appengine"
 	"appengine/blobstore"
 	"appengine/datastore"
@@ -245,6 +247,7 @@ func renderRoot(w http.ResponseWriter, r *http.Request, filter []int) {
 		"uploadURL": uploadURL,
 		"ccs":       ccperiods,
 		"sss":       ssperiods,
+		"now":       now,
 	})
 }
 
@@ -383,6 +386,7 @@ func edit(w http.ResponseWriter, r *http.Request) {
 		k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c, sem, yr))
 		var uTile Tile
 		datastore.Get(c, k, &uTile)
+		log.Println(lcs.Diff(value, uTile.Desc))
 		uTile.Desc = value
 		uTile.LastUpdate = time.Now()
 		datastore.Put(c, k, &uTile)
