@@ -6,6 +6,7 @@ body {
   padding-top: 40px;
   padding-bottom: 40px;
   color: #5a5a5a;
+  font-family: 'Raleway';
 }
 
 
@@ -179,6 +180,10 @@ body {
     vertical-align: middle;
 }
 
+h1.center{
+  text-align: center;
+}
+
 img.center {
     vertical-align: middle;
     max-height: 165px;
@@ -186,7 +191,8 @@ img.center {
 }
 
 img.caro {
-  height: 150px;
+  max-height: 150px;
+  max-width: 300px;
   width: auto;
   display: block;
   margin-left: auto;
@@ -213,4 +219,13 @@ img.caro {
 
 p {
     font-family: "Raleway";
+}
+
+
+img.about {
+  vertical-align: middle;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  
 }

@@ -37,7 +37,7 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="/">Home</a></li>
+              <li><a href="/">Home</a></li>
               <li><a href="/about">About</a></li>
               <li><a href="/carousel">Presentation view</a></li>
               <li class="dropdown">
@@ -76,7 +76,7 @@
     <div class="row">
 
       <div class="col-lg-12">
-        <h3 class="page-header-custom text-center">Here are the companies our students are working with.</h3>
+        <h3 class="page-header-custom text-center">Companies who have challenged our students:</h3>
       </div>
     </div>
      {{$numcols := 12}}
@@ -124,10 +124,14 @@
           <div class="carousel-caption">
             <!---<h1>{{.Name}}</h1>-->
             <img class="caro" src="serve/?blobKey={{.Imgref}}" alt="">
+            <br><br>
             <p><b>{{.Name}}'s Challenge:</b> </p>
             <p>{{.Category}}</p>
+            <p><b>Product Narrative:</b></p>
             <p>{{.Desc}}</p>
-            <p><b>Team:</b> {{.Members}}</p>
+            {{with .Members}}
+            <p><b>Team:</b> {{format .}}</p>
+          {{end}}
           </div>
         </div>
       </div>
