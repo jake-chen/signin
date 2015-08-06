@@ -95,6 +95,7 @@ func init() {
 
 	http.HandleFunc("/semester", semester)
 	http.HandleFunc("/carousel", carousel)
+	http.HandleFunc("/about", about)
 	//handles root view
 	http.Handle("/", r)
 }
@@ -457,24 +458,93 @@ func carousel(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	ccperiods := make([]Period, 0)
+	ssperiods := make([]Period, 0)
+	fallqs := datastore.NewQuery("Date").Ancestor(CCRoot(c)).Order("-Semester").Order("-Year")
+	springqs := datastore.NewQuery("Date").Ancestor(SSRoot(c)).Order("-Semester").Order("-Year")
+	fallqs.GetAll(c, &ccperiods)
+	springqs.GetAll(c, &ssperiods)
 	//debug
 	//log.Print(tiles)
-
-	//serve the root template
-
 	funcMap := template.FuncMap{
 		"divide":   div,
 		"incr":     incr,
+		"cong":     congz,
 		"congb":    congzb,
 		"congc":    congzc,
 		"ustring":  ustring,
 		"contains": contains,
 		"isAdmin":  isAdmin,
+		"netID":    netID,
+		"format":   fmtMembers,
 	}
 
 	//	fp3 := path.Join("templates", "welcome.html")
 	templ := template.Must(template.New("carousel.html").Funcs(funcMap).ParseFiles("templates/carousel.html"))
+	//obtain a new uploadURL for team photo, for blobstore
 	w.Header().Set("Content-Type", "text/html")
-	templ.Execute(w, map[string]interface{}{"Tiles": tiles, "LoggedIn": status})
+	templ.Execute(w, map[string]interface{}{
+		"Tiles":    tiles,
+		"LoggedIn": status,
+		"ccs":      ccperiods,
+		"sss":      ssperiods,
+		"now":      now,
+	})
+}
+
+func about(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	//log.Println(c)
+	u := user.Current(c)
+	//need to check if user is logged in so that the login/logout button
+	//is toggled correctly
+	var status *Status = &Status{LoggedIn: false, CurrentUser: nil}
+	if u == nil {
+		status.reset()
+	} else if matched, _ := regexp.MatchString(".*@cornell.edu", u.String()); !matched {
+		status.reset()
+		http.Redirect(w, r, "/logout", http.StatusFound)
+	} else {
+		status.set(true, u)
+	}
+	var now Period
+	datastore.Get(c, currentSemesterKey(c), &now)
+
+	qs := datastore.NewQuery("Tile").Ancestor(tileRootKey(c, now.Semester, now.Year))
+	tiles := make([]Tile, 0, 10)
+	if _, err := qs.GetAll(c, &tiles); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	ccperiods := make([]Period, 0)
+	ssperiods := make([]Period, 0)
+	fallqs := datastore.NewQuery("Date").Ancestor(CCRoot(c)).Order("-Semester").Order("-Year")
+	springqs := datastore.NewQuery("Date").Ancestor(SSRoot(c)).Order("-Semester").Order("-Year")
+	fallqs.GetAll(c, &ccperiods)
+	springqs.GetAll(c, &ssperiods)
+	//debug
+	//log.Print(tiles)
+	funcMap := template.FuncMap{
+		"divide":   div,
+		"incr":     incr,
+		"cong":     congz,
+		"ustring":  ustring,
+		"contains": contains,
+		"isAdmin":  isAdmin,
+		"netID":    netID,
+		"format":   fmtMembers,
+	}
+
+	//	fp3 := path.Join("templates", "welcome.html")
+	templ := template.Must(template.New("about.html").Funcs(funcMap).ParseFiles("templates/about.html"))
+	//obtain a new uploadURL for team photo, for blobstore
+	w.Header().Set("Content-Type", "text/html")
+	templ.Execute(w, map[string]interface{}{
+		"Tiles":    tiles,
+		"LoggedIn": status,
+		"ccs":      ccperiods,
+		"sss":      ssperiods,
+		"now":      now,
+	})
+
 }
