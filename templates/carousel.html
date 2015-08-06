@@ -38,7 +38,7 @@
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="/">Home</a></li>
-              <li><a href="#about">About</a></li>
+              <li><a href="/about">About</a></li>
               <li><a href="/carousel">Presentation view</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Projects<span class="caret"></span></a>
@@ -85,11 +85,13 @@
   {{if congb $tmp}}
     <div class="row">
   {{end}}
-      <div class="col-lg-1 col-md-2 col-xs-6" id="carousel-selector-{{$count}}">
+  <div class="carouselpadding">
+      <div class="col-lg-2 col-md-2 col-xs-6" id="carousel-selector-{{$count}}">
         <a class="thumbnail" href="#">
-          <img class="img-responsive" src="serve/?blobKey={{.Imgref}}" alt="">
+          <img class="thumbpic" src="serve/?blobKey={{.Imgref}}" alt="">
         </a>
       </div>
+    </div>
   {{if congc $tmp}}
     </div>
   {{end}} 
@@ -120,7 +122,9 @@
         <!---<img class="img-responsive center-block" src="serve/?blobKey={{.Imgref}}" alt="First slide">-->
         <div class="container">
           <div class="carousel-caption">
-            <h1>{{.Name}}</h1>
+            <!---<h1>{{.Name}}</h1>-->
+            <img class="caro" src="serve/?blobKey={{.Imgref}}" alt="">
+            <p><b>{{.Name}}'s Challenge:</b> </p>
             <p>{{.Category}}</p>
             <p>{{.Desc}}</p>
           </div>

@@ -179,17 +179,30 @@ body {
     vertical-align: middle;
 }
 
-.center img {
+img.center {
     vertical-align: middle;
     max-height: 165px;
     max-width: 165px;
 }
 
+img.caro {
+  height: 150px;
+  width: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+}
+
 .aboutdesc {
   padding-top: 2%;
   padding-bottom: 2%;
-  padding-right: 5%;
+  padding-right: 16%;
+  padding-left: 16%;
+}
+
+.carouselpadding {
   padding-left: 5%;
+  padding-right: 5%;
 }
 
 /*@media (min-width: 992px) {
@@ -197,3 +210,7 @@ body {
     margin-top: 120px;
   }
 }*/
+
+p {
+    font-family: "Raleway";
+}

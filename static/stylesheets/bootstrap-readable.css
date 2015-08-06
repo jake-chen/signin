@@ -5076,11 +5076,11 @@ a.badge:focus {
 }
 .thumbnail {
   display: block;
-  padding: 4px;
+  padding: 10px;
   margin-bottom: 22px;
   line-height: 1.42857143;
   background-color: #ffffff;
-  border: 1px solid #dddddd;
+  border: 1px solid #ffffff;
   border-radius: 4px;
   -webkit-transition: border 0.2s ease-in-out;
   -o-transition: border 0.2s ease-in-out;
@@ -5094,12 +5094,21 @@ a.badge:focus {
 a.thumbnail:hover,
 a.thumbnail:focus,
 a.thumbnail.active {
-  border-color: #4582ec;
+  border-color: #FFFFFF;
 }
 .thumbnail .caption {
   padding: 9px;
   color: #333333;
 }
+img.thumbpic {
+  min-width: 100px;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  display:inline-block;
+  float: middle;
+}
+
 .alert {
   padding: 15px;
   margin-bottom: 22px;
@@ -6394,31 +6403,31 @@ button.close {
   left: 0;
   bottom: 0;
   width: 15%;
-  opacity: 0.5;
-  filter: alpha(opacity=50);
+  opacity: 0;
   font-size: 20px;
-  color: #ffffff;
+  color: #000000;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
-.carousel-control.left {
+/*.carousel-control.left {
   background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);
   background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);
   background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.0001)));
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#80000000', endColorstr='#00000000', GradientType=1);
-}
+}*/
 .carousel-control.right {
   left: auto;
   right: 0;
+}
+  /*
   background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.0001)), to(rgba(0, 0, 0, 0.5)));
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1);
-}
+}*/
 .carousel-control:hover,
 .carousel-control:focus {
   outline: 0;
@@ -6426,7 +6435,7 @@ button.close {
   text-decoration: none;
   opacity: 0.9;
   filter: alpha(opacity=90);
-}
+} 
 .carousel-control .icon-prev,
 .carousel-control .icon-next,
 .carousel-control .glyphicon-chevron-left,
@@ -6495,12 +6504,16 @@ button.close {
   right: 15%;
   bottom: 20px;
   z-index: 10;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 20px;
   color: #000000;
-  text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  /*text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);*/
 }
+
+.carousel-caption h1 {
+  text-align: center;
+}
+
 .carousel-caption .btn {
   text-shadow: none;
 }
