@@ -223,8 +223,8 @@ p {
 
 
 img.about {
-  vertical-align: middle;
-  max-width: 100%;
+  display: block;
+  max-width: 80%;
   margin-right: auto;
   margin-left: auto;
   
