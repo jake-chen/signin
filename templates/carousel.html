@@ -41,7 +41,7 @@
               <li><a href="/about">About</a></li>
               <li><a href="/carousel">Presentation view</a></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Projects<span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company Challenges<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   {{range index . "ccs"}}
                   <li><a href="#" onclick="post('/',{semester:{{.Semester}}, year:{{.Year}} })">{{if (eq .Semester 0)}} Fall {{else}} Spring {{end}} {{.Year}}</a></li>
@@ -80,6 +80,7 @@
         <h3 class="page-header-custom text-center">Companies who have challenged our students:</h3>
       </div>
     </div>
+    <div class="pics">
      {{$numcols := 12}}
     <!--TILES BEGIN HERE-->
 {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$sem:=.Period.Semester}} {{$yr := .Period.Year}} {{$tmp := $count}} 
@@ -101,6 +102,7 @@
 
 {{if not (congb (index . "Tiles" | len))}}
   </div>
+</div>
 {{end}}
 
 
@@ -192,6 +194,7 @@ $('#myCarousel').on('slid', function (e) {
   $('[id=carousel-selector-'+id+']').addClass('selected');
 });
   </script>
+  <script src="/static/buildboard.js"></script>
 </body>
 
 </html>
