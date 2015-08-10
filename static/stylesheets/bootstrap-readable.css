@@ -6964,6 +6964,8 @@ legend {
   height: 100%;
   line-height: 5px;
   text-align: left;
+  padding-right: 5%;
+  padding-left: 5%;
 }
 
 span {
