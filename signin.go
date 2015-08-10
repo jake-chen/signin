@@ -31,7 +31,8 @@ type Period struct {
 
 //a Tile represents a slot for a team on the buildboard
 type Tile struct {
-	Name       string    //team name
+	Name       string    //team's company
+	Number     int       //identifier for team within company
 	Desc       string    //narrative
 	Category   string    //company challenge question
 	Imgref     string    //company logo
@@ -70,6 +71,10 @@ func contains(s []string, a string) bool {
 
 func (p *Period) String() string {
 	return fmt.Sprintf("%v_%v", p.Semester, p.Year)
+}
+
+func strint(a string, b int) string {
+	return a + "_" + strconv.Itoa(b)
 }
 
 //google app engine init function
@@ -313,8 +318,13 @@ func submit(w http.ResponseWriter, r *http.Request) {
 	var now Period
 	datastore.Get(c, currentSemesterKey(c), &now)
 	log.Println(now)
+	count, cnterr := datastore.NewQuery("Tile").Ancestor(tileRootKey(c, now.Semester, now.Year)).Filter("Name =", string(other["inputName"][0])).Count(c)
+	if cnterr != nil {
+		log.Println("Something failed with counting for some reason")
+	}
 	newdata := Tile{
 		Name:       string(other["inputName"][0]),
+		Number:     count,
 		Desc:       string(other["textArea"][0]),
 		Category:   string(other["inputCategory"][0]),
 		Imgref:     string(blobs["inputFile"][0].BlobKey),
@@ -326,7 +336,7 @@ func submit(w http.ResponseWriter, r *http.Request) {
 		Period:     now,
 	}
 	log.Println(newdata)
-	key := datastore.NewKey(c, "Tile", newdata.Name, 0, tileRootKey(c, now.Semester, now.Year))
+	key := datastore.NewKey(c, "Tile", strint(newdata.Name, count), 0, tileRootKey(c, now.Semester, now.Year))
 	_, keyerr := datastore.Put(c, key, &newdata)
 	if keyerr != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -351,7 +361,11 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	if e1 != nil || e2 != nil {
 		panic("shouldn't happen; semester and year guaranteed to be ints")
 	}
-	k := datastore.NewKey(c, "Tile", r.FormValue("name"), 0, tileRootKey(c, sem, yr))
+	count, cnterr := datastore.NewQuery("Tile").Ancestor(tileRootKey(c, sem, yr)).Filter("Name =", r.FormValue("name")).Count(c)
+	if cnterr != nil {
+		log.Println("Something failed with counting for some reason")
+	}
+	k := datastore.NewKey(c, "Tile", strint(r.FormValue("name"), count), 0, tileRootKey(c, sem, yr))
 	datastore.Get(c, k, &dTile)
 	if u := user.Current(c); !u.Admin {
 		http.Redirect(w, r, "/", http.StatusFound)
@@ -375,16 +389,21 @@ func edit(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	var now Period
 	datastore.Get(c, currentSemesterKey(c), &now)
-	arr := regexp.MustCompile("_").Split(r.FormValue("id"), 3)
+	arr := regexp.MustCompile("_").Split(r.FormValue("id"), 4)
 	name := arr[0]
-	sem, e1 := strconv.Atoi(arr[1])
-	yr, e2 := strconv.Atoi(arr[2])
+	count, cnterr := strconv.Atoi(arr[1])
+	if cnterr != nil {
+		log.Println("Something failed with counting for some reason")
+	}
+
+	sem, e1 := strconv.Atoi(arr[2])
+	yr, e2 := strconv.Atoi(arr[3])
 	if e1 != nil || e2 != nil {
 		panic("neither year nor sem should be non-ints")
 	}
 	if now.Semester == sem && now.Year == yr {
 		value := r.FormValue("value")
-		k := datastore.NewKey(c, "Tile", name, 0, tileRootKey(c, sem, yr))
+		k := datastore.NewKey(c, "Tile", strint(name, count), 0, tileRootKey(c, sem, yr))
 		var uTile Tile
 		datastore.Get(c, k, &uTile)
 		//	log.Println(lcs.Diff(value, uTile.Desc))
