@@ -88,7 +88,7 @@
     <!-- START THE FEATURETTES -->
     {{$numcols := 2}}
     <!--TILES BEGIN HERE-->
-    {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$sem:=.Period.Semester}} {{$yr := .Period.Year}} {{$tmp := $count}} {{if cong $tmp}}
+    {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$number := .Number}} {{$sem:=.Period.Semester}} {{$yr := .Period.Year}} {{$tmp := $count}}{{if cong $tmp}}
     <div class="row featurette">
       {{end}}
       <div class="col-md-6">
@@ -131,9 +131,9 @@
         <div class="descrip">
         {{with .}}
           {{if contains .CanEdit (netID (ustring $stats.CurrentUser))}}
-          <span><p class="desc editable_textarea text-justify" id="{{$name}}_{{$sem}}_{{$yr}}">{{.Desc}}</p></span>
+          <span><p class="desc editable_textarea text-justify" id="{{$name}}_{{$number}}_{{$sem}}_{{$yr}}">{{.Desc}}</p></span>
           {{else}}
-          <span><p class="desc text-justify" id="{{$name}}_{{$sem}}_{{$yr}}">{{.Desc}}</p></span>
+          <span><p class="desc text-justify" id="{{$name}}_{{$number}}_{{$sem}}_{{$yr}}">{{.Desc}}</p></span>
           {{end}}
         {{else}}
           <p class="desc">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
