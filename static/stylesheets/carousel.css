@@ -163,6 +163,11 @@ body {
 
 .col-md-4 {
   height: 165px;
+  padding-left: 5%;
+}
+
+.col-md-8 {
+  padding-right: 5%;
 }
 
 .frame {
