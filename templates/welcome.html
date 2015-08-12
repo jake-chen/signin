@@ -141,7 +141,7 @@
         </div>
 
           {{if isAdmin $stats.CurrentUser}}
-          <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}},{{.Period.Semester}},{{.Period.Year}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
+          <a class="pull-right btn-sm" href="#" onclick="rmtile(event, {{.Name}},{{$number}},{{.Period.Semester}},{{.Period.Year}}); return false;"><i class="glyphicon glyphicon-trash icon-white"></i></a> {{end}}
       </div>
     </div>
       {{if not (cong $tmp)}}

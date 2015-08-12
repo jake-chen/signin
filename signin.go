@@ -356,16 +356,13 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	var dTile Tile
 	//	var now Period
 	//	datastore.Get(c, currentSemesterKey(c), &now)
+	num, e := strconv.Atoi(r.FormValue("num"))
 	sem, e1 := strconv.Atoi(r.FormValue("semester"))
 	yr, e2 := strconv.Atoi(r.FormValue("year"))
-	if e1 != nil || e2 != nil {
+	if e != nil || e1 != nil || e2 != nil {
 		panic("shouldn't happen; semester and year guaranteed to be ints")
 	}
-	count, cnterr := datastore.NewQuery("Tile").Ancestor(tileRootKey(c, sem, yr)).Filter("Name =", r.FormValue("name")).Count(c)
-	if cnterr != nil {
-		log.Println("Something failed with counting for some reason")
-	}
-	k := datastore.NewKey(c, "Tile", strint(r.FormValue("name"), count), 0, tileRootKey(c, sem, yr))
+	k := datastore.NewKey(c, "Tile", strint(r.FormValue("name"), num), 0, tileRootKey(c, sem, yr))
 	datastore.Get(c, k, &dTile)
 	if u := user.Current(c); !u.Admin {
 		http.Redirect(w, r, "/", http.StatusFound)
