@@ -5103,9 +5103,8 @@ a.thumbnail.active {
 img.thumbpic {
   vertical-align: middle;
   display:inline-block;
-  min-width: 100px;
-  max-width: 150px;
-  height: auto;
+  height: 54px;
+  width: auto;
 }
 
 .alert {

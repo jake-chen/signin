@@ -222,8 +222,8 @@
               <div class="form-group">
                 <label for="inputFile" class="col-lg-2 control-label">Company Logo</label>
                 <div class="col-lg-10">
-                  <input type="file" class="form-control" name="inputFile" id="inputFile" accept="image/*" onchange="loadFile(event)" required>
-                  <p>  **Recommended minimum size 1024 x 200 px</p>
+                  <input type="file" class="form-control" name="inputFile" id="inputFile" accept="image/*" onchange="loadFile(event)">
+                  <p>  **Recommended to use a transparent logo, minimum size 1024 x 200 px</p>
                   <img class="img-responsive" id="output" />
                   <script>
                     var loadFile = function(event) {
@@ -234,11 +234,11 @@
                   </script>
                 </div>
               </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
             </fieldset>
           </form>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Submit</button>
         </div>
       </div>
 

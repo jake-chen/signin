@@ -23,6 +23,7 @@ body {
   margin-bottom: 20px;
 }
 
+
 /* Flip around the padding for proper display in narrow viewports */
 .navbar-wrapper > .container {
   padding-right: 0;
@@ -118,9 +119,9 @@ body {
     padding-left: 0;
   }
 
-  /* The navbar becomes detached from the top, so we round the corners */
+  /* The navbar becomes detached from the top, so we round the corners (DONT ROUND CORNERS)*/
   .navbar-wrapper .navbar {
-    border-radius: 4px;
+    border-radius: 0px;
   }
 
   /* Bump up size of carousel content */
@@ -233,5 +234,9 @@ img.about {
   margin-right: auto;
   margin-left: auto;
   
+}
+
+h3 {
+  padding-bottom: 0px;
 }
 

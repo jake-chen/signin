@@ -80,30 +80,31 @@
         <h3 class="page-header-custom text-center">Companies who have challenged our students:</h3>
       </div>
     </div>
-      <div class="grid js-masonry" data-masonry-options='{ "itemSelector": ".grid-item", "columWidth": 200 }'>
-      <!--<div id="masonry-grid">-->
-     <!--{{$numcols := 12}}
+    <div class="pics">
+     {{$numcols := 12}}
     <!--TILES BEGIN HERE-->
 {{range $count, $val := (index . "Tiles")}} {{$name := .Name}} {{$sem:=.Period.Semester}} {{$yr := .Period.Year}} {{$tmp := $count}} 
   {{if congb $tmp}}
-    <!--<div class="row">-->
+    <div class="row">
   {{end}}
-  <div class="grid-item">
-      <!--<div  id="carousel-selector-{{$count}}">-->
+  <div class="carouselpadding">
+      <!--<div class="col-lg-2 col-md-2 col-xs-6" id="carousel-selector-{{$count}}">-->
+      <div class="grid js-masonry" data-masonry-options='{ "itemSelector": ".grid-item", "columWidth": 200 }' id="carousel-selector-{{$count}}">
         <a class="thumbnail" href="#">
+          <div class="grid-item">
           <img class="thumbpic" src="serve/?blobKey={{.Imgref}}" alt="">
+        </div>
         </a>
-      <!--</div>-->
+      </div>
     </div>
   {{if congc $tmp}}
-    <!--</div>-->
+    </div>
   {{end}} 
 {{end}}
     <!-- /END THE FEATURETTES -->
 
 {{if not (congb (index . "Tiles" | len))}}
   </div>
-<!--</div>-->
 </div>
 {{end}}
 
@@ -125,19 +126,20 @@
          <div class="item" data-slide-number="{{$count}}">
            {{end}}
         <!---<img class="img-responsive center-block" src="serve/?blobKey={{.Imgref}}" alt="First slide">-->
-            <div class="container">
-              <div class="carousel-caption">
-                <!---<h1>{{.Name}}</h1>-->
-                <img class="caro" src="serve/?blobKey={{.Imgref}}" alt="">
-                <p><b>{{.Name}}'s Challenge:</b> </p>
-                <p>{{.Category}}</p>
-                <p><b>Product Narrative:</b></p>
-                <p>{{.Desc}}</p>
-                {{with .Members}}
-                <p><b>Team:</b> {{format .}}</p>
-                {{end}}
-              </div>
-            </div>
+        <div class="container">
+          <div class="carousel-caption">
+            <!---<h1>{{.Name}}</h1>-->
+            <img class="caro" src="serve/?blobKey={{.Imgref}}" alt="">
+            <br><br>
+            <p><b>{{.Name}}'s Challenge:</b> </p>
+            <p>{{.Category}}</p>
+            <p><b>Product Narrative:</b></p>
+            <p>{{.Desc}}</p>
+            {{with .Members}}
+            <p><b>Team:</b> {{format .}}</p>
+          {{end}}
+          </div>
+        </div>
       </div>
       {{end}}
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
