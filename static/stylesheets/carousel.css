@@ -163,7 +163,21 @@ body {
 }
 
 .col-md-4 {
-  height: 165px;
+  height: 140px;
+}
+
+.col-md-8{
+  height: 140px;
+}
+
+.colmd4ext {
+  height: 80px;
+}
+
+.colmd8ext {
+  height: 80px;
+  padding-top: 0px;
+  margin-top: 0px;
 }
 
 .col-md-8 {
@@ -204,6 +218,7 @@ img.caro {
   margin-left: auto;
   margin-right: auto;
   padding-bottom: 10px;
+  padding-top: 10px;
 }
 
 .aboutdesc {
@@ -214,8 +229,10 @@ img.caro {
 }
 
 .carouselpadding {
-  padding-left: 5%;
-  padding-right: 5%;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 0%;
+  padding-bottom: 7%;
 }
 
 /*@media (min-width: 992px) {
@@ -306,9 +323,31 @@ h3 {
     .col-md-4 {
       height: 120px;
     }
+
+
     .col-md-8 {
       padding-left: 5%;
       padding-right: 5%;
     }
+}
+
+.carouselh4 {
+  font-size: 30px;
+  font-family: 'Raleway';
+  margin-top: 0px;
+  padding-top: 0px;
+  line-height: 1.4;
+}
+
+p.carouselp{
+  font-size: 21px;
+}
+
+p.carousel30{
+  font-size: 28px;
+}
+
+.fixedline{
+  line-height: 1.4;
 }
 

@@ -6535,8 +6535,8 @@ button.close {
     margin-right: -15px;
   }
   .carousel-caption {
-    left: 20%;
-    right: 20%;
+    left: 10%;
+    right: 10%;
     padding-bottom: 0px;
   }
   .carousel-indicators {

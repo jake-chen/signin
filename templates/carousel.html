@@ -84,11 +84,9 @@
         <div class="container marketing pad-top">
     <!---<div class="aboutdesc">-->
           {{if (eq (index . "now").Semester 0)}}
-            <h1>Company Challenges</h1>
-            <p>Cornell Tech Company Challenges inspire integrated teams of computer science, business, and information science Masters students to deliver new business ideas and prototypes in response to challenges posed by leading startups, companies, and nonprofits.</p>
+            <p class="carouselp"><b>Cornell Tech Company Challenges</b> inspire integrated teams of computer science, business, and information science Masters students to deliver new business ideas and prototypes in response to challenges posed by leading startups, companies, and nonprofits.</p>
             {{else}} 
-            <h1>Startup Studio</h1> 
-            <p>In Startup Studio students build a startup from the ground up, developing a pitch, deck, and prototype that can be shared with others, tested with users and leveraged as a launching pad for future endeavors. </p>
+            <p class="carouselp">In the <b>Cornell Tech Startup Studio</b> students build a startup from the ground up, developing a pitch, deck, and prototype that can be shared with others, tested with users and leveraged as a launching pad for future endeavors. </p>
           {{end}}
         </div>
       </div>
@@ -144,14 +142,24 @@
             <div class="container">
               <div class="carousel-caption">
                 <!---<h1>{{.Name}}</h1>-->
-                <img class="caro" src="serve/?blobKey={{.Imgref}}" alt="">
-                <p><b>{{.Name}}'s Challenge:</b> </p>
-                <p>{{.Category}}</p>
-                <p><b>Product Narrative:</b></p>
-                <p>{{.Desc}}</p>
+                <div class="col-md-4 fixedline">
+                  <div class="colmd4ext">
+                  <img class="caro" src="serve/?blobKey={{.Imgref}}" alt="">
+                </div>
+                </div>
+                <!---<p><b>{{.Name}}'s Challenge:</b> </p>-->
+                <div class="col-md-8 fixedline">
+                  <div class="colmd8ext">
+                <h4 class="carouselh4">{{.Category}}</h4>
+              </div>
+              </div>
+                <!---<p><b>Product Narrative:</b></p>-->
+                <div class="col-md-12 fixedline">
+                <p class="carousel30">{{.Desc}}</p>
                 {{with .Members}}
-                <p><b>Team:</b> {{format .}}</p>
+                <p class="carousel30"><b>Team:</b> {{format .}}</p>
                 {{end}}
+              </div>
               </div>
             </div>
       </div>
