@@ -6500,7 +6500,7 @@ button.close {
   position: absolute;
   left: 15%;
   right: 15%;
-  top: 50px;
+  top: 20px;
   z-index: 10;
   padding-top: 10px;
   padding-bottom: 20px;
@@ -6536,7 +6536,7 @@ button.close {
   .carousel-caption {
     left: 20%;
     right: 20%;
-    padding-bottom: 300px;
+    padding-bottom: 0px;
   }
   .carousel-indicators {
     bottom: 20px;

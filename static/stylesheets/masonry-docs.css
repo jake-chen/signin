@@ -1790,3 +1790,7 @@ two columns for large devices
     #masonry-grid .grid-item{width:100%;}
 }
 
+.grid {
+  margin: 0 auto;
+}
+
