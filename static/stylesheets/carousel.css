@@ -163,19 +163,19 @@ body {
 }
 
 .col-md-4 {
-  height: 140px;
+  /*height: 140px;*/
 }
 
 .col-md-8{
-  height: 140px;
+  /*height: 140px;*/
 }
 
 .colmd4ext {
-  height: 80px;
+  /*height: 80px;*/
 }
 
 .colmd8ext {
-  height: 80px;
+  /*height: 80px;*/
   padding-top: 0px;
   margin-top: 0px;
 }
